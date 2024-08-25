@@ -17,7 +17,7 @@ abstract class AbstractImage
     /**
      * @var ContentObjectRenderer
      */
-    public ContentObjectRenderer $cObj;
+    protected ContentObjectRenderer $cObj;
 
     /**
      * {@inheritdoc}
@@ -83,4 +83,9 @@ abstract class AbstractImage
      * @return int
      */
     abstract public function type(): int;
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
+    }
 }

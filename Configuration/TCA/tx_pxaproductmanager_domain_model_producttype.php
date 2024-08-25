@@ -1,6 +1,8 @@
 <?php
 
-defined('TYPO3_MODE') || die('Access denied.');
+use Pixelant\PxaProductManager\Utility\TcaUtility;
+use Pixelant\PxaProductManager\Hook\ItemsProcFunc\ProductItemsProcFunc;
+defined('TYPO3') || die('Access denied.');
 
 return (function () {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
@@ -11,8 +13,6 @@ return (function () {
             'label' => 'name',
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
-            'cruser_id' => 'cruser_id',
-            'dividers2tabs' => true,
 
             'languageField' => 'sys_language_uid',
             'transOrigPointerField' => 'l10n_parent',
@@ -34,26 +34,13 @@ return (function () {
             'sys_language_uid' => [
                 'exclude' => true,
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-                'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple',
-                        ],
-                    ],
-                    'default' => 0,
-                ],
+                'config' => ['type' => 'language'],
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'group',
-                    'internal_type' => 'db',
                     'allowed' => 'tx_pxaproductmanager_domain_model_producttype',
                     'size' => 1,
                     'maxitems' => 1,
@@ -74,8 +61,7 @@ return (function () {
                     'renderType' => 'checkboxToggle',
                     'items' => [
                         [
-                            0 => '',
-                            1 => '',
+                            'label' => '',
                             'invertStateDisplay' => true,
                         ],
                     ],
@@ -87,7 +73,8 @@ return (function () {
                 'config' => [
                     'type' => 'input',
                     'size' => 30,
-                    'eval' => 'trim,required',
+                    'eval' => 'trim',
+                    'required' => true,
                 ],
             ],
             'attribute_sets' => [
@@ -98,7 +85,7 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectMultipleSideBySide',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_attributeset',
-                    'foreign_table_where' => \Pixelant\PxaProductManager\Utility\TcaUtility::getAttributesSetsForeignTableWherePid() .
+                    'foreign_table_where' => TcaUtility::getAttributesSetsForeignTableWherePid() .
                         ' ORDER BY tx_pxaproductmanager_domain_model_attributeset.sorting',
                     'MM' => 'tx_pxaproductmanager_attributeset_record_mm',
                     'MM_match_fields' => [
@@ -139,7 +126,7 @@ return (function () {
                 'config' => [
                     'type' => 'select',
                     'renderType' => 'selectCheckBox',
-                    'itemsProcFunc' => \Pixelant\PxaProductManager\Hook\ItemsProcFunc\ProductItemsProcFunc::class . '->getProductFields',
+                    'itemsProcFunc' => ProductItemsProcFunc::class . '->getProductFields',
                     'itemsProcConfig' => [
                         'exclude' => 'attributes_values',
                     ],

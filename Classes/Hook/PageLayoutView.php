@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Hook;
 
+use PDO;
 use Pixelant\PxaProductManager\Configuration\Flexform\Registry;
 use Pixelant\PxaProductManager\Configuration\Flexform\StructureLoader;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
@@ -210,13 +211,11 @@ class PageLayoutView
 
         $rows = $queryBuilder
             ->select($titleField)
-            ->from($table)
-            ->where($queryBuilder->expr()->in(
-                'uid',
-                $queryBuilder->createNamedParameter($uids, Connection::PARAM_INT_ARRAY)
-            ))
-            ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            ->from($table)->where($queryBuilder->expr()->in(
+            'uid',
+            $queryBuilder->createNamedParameter($uids, Connection::PARAM_INT_ARRAY)
+        ))->executeQuery()
+            ->fetchAll(PDO::FETCH_COLUMN);
 
         return is_array($rows) ? implode(', ', $rows) : '';
     }

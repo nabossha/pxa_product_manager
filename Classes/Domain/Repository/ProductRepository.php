@@ -24,7 +24,9 @@ namespace Pixelant\PxaProductManager\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use Pixelant\PxaProductManager\Domain\Model\Product;
+use TYPO3\CMS\Core\Database\Connection;
+use PDO;
 use Pixelant\PxaProductManager\Domain\Model\DTO\DemandInterface;
 use Pixelant\PxaProductManager\Domain\Model\Filter;
 use Pixelant\PxaProductManager\Event\Repository\GetProductQueryBuilderEvent;
@@ -50,7 +52,7 @@ class ProductRepository extends AbstractDemandRepository
      */
     public function getObjectClassName(): string
     {
-        return \Pixelant\PxaProductManager\Domain\Model\Product::class;
+        return Product::class;
     }
 
     /**
@@ -157,7 +159,7 @@ class ProductRepository extends AbstractDemandRepository
                     'pages.uid',
                     $parentQueryBuilder->createNamedParameter(
                         $singleViewPageIds,
-                        \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY
+                        Connection::PARAM_INT_ARRAY
                     )
                 )
             )
@@ -194,16 +196,13 @@ class ProductRepository extends AbstractDemandRepository
 
         foreach ($values as $value) {
             $conditions->add(
-                $expressionBuilder->orX(
-                    $expressionBuilder->eq(
-                        'tpdmav.value',
-                        $parentQueryBuilder->createNamedParameter($value, \PDO::PARAM_INT)
-                    ),
-                    $expressionBuilder->inSet(
-                        'tpdmav.value',
-                        $parentQueryBuilder->createNamedParameter($value, \PDO::PARAM_STR)
-                    )
-                )
+                $expressionBuilder->or($expressionBuilder->eq(
+                    'tpdmav.value',
+                    $parentQueryBuilder->createNamedParameter($value, PDO::PARAM_INT)
+                ), $expressionBuilder->inSet(
+                    'tpdmav.value',
+                    $parentQueryBuilder->createNamedParameter($value, PDO::PARAM_STR)
+                ))
             );
         }
 
@@ -221,7 +220,7 @@ class ProductRepository extends AbstractDemandRepository
             ->where(
                 $queryBuilder->expr()->eq(
                     'tpdma.uid',
-                    $parentQueryBuilder->createNamedParameter($attributeId, \PDO::PARAM_INT)
+                    $parentQueryBuilder->createNamedParameter($attributeId, PDO::PARAM_INT)
                 ),
             )
             ->andWhere($conditions)
@@ -262,7 +261,7 @@ class ProductRepository extends AbstractDemandRepository
             $conditions->add(
                 $expressionBuilder->eq(
                     'sc.uid',
-                    $parentQueryBuilder->createNamedParameter((int)$value, \PDO::PARAM_INT)
+                    $parentQueryBuilder->createNamedParameter((int)$value, PDO::PARAM_INT)
                 )
             );
         }
@@ -286,14 +285,14 @@ class ProductRepository extends AbstractDemandRepository
                     'scrm.tablenames',
                     $parentQueryBuilder->createNamedParameter(
                         self::TABLE_NAME,
-                        \PDO::PARAM_STR
+                        PDO::PARAM_STR
                     )
                 ),
                 $queryBuilder->expr()->eq(
                     'scrm.fieldname',
                     $parentQueryBuilder->createNamedParameter(
                         'categories',
-                        \PDO::PARAM_STR
+                        PDO::PARAM_STR
                     )
                 )
             )

@@ -2,6 +2,8 @@
 
 namespace Pixelant\PxaProductManager\Tests\Functional\Hook\ProcessDatamap;
 
+use TYPO3\CMS\Core\Authentication\BackendUserAuthentication;
+use Exception;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 use Pixelant\PxaProductManager\Attributes\ConfigurationProvider\ConfigurationProviderFactory;
 use Pixelant\PxaProductManager\Domain\Model\AttributeValue;
@@ -113,7 +115,7 @@ class ProductInheritanceProcessDatamapTest extends FunctionalTestCase
     ];
 
     /**
-     * @var \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
+     * @var BackendUserAuthentication
      */
     protected $backendUser;
 
@@ -161,7 +163,7 @@ class ProductInheritanceProcessDatamapTest extends FunctionalTestCase
     {
         // Only load all attributes if they aren't already loaded.
         if (empty($this->attributes)) {
-            $attributes = \Pixelant\PxaProductManager\Utility\AttributeUtility::findAllAttributes();
+            $attributes = AttributeUtility::findAllAttributes();
 
             foreach ($attributes as $attribute) {
                 if ($attribute['uid'] === 0) {
@@ -699,7 +701,7 @@ class ProductInheritanceProcessDatamapTest extends FunctionalTestCase
      * @param Product $parentProduct
      * @param Product $childProduct
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     protected function assertChildInheritedFieldsAreEqualToParent(
         Product $parentProduct,
@@ -716,7 +718,7 @@ class ProductInheritanceProcessDatamapTest extends FunctionalTestCase
                 $attributeIdentifier = $this->attributes[$uid]->getIdentifier();
 
                 self::assertInstanceOf(
-                    \Pixelant\PxaProductManager\Domain\Model\AttributeValue::class,
+                    AttributeValue::class,
                     $childProduct->getAttributeValue()[$attributeIdentifier],
                 );
 
@@ -731,7 +733,7 @@ class ProductInheritanceProcessDatamapTest extends FunctionalTestCase
                     $parentData = $parentProduct->{$methodName}();
                     $childData = $childProduct->{$methodName}();
 
-                    if ($parentData instanceof \TYPO3\CMS\Extbase\Persistence\ObjectStorage) {
+                    if ($parentData instanceof ObjectStorage) {
                         self::assertEquals(
                             get_class($parentData),
                             get_class($childData)
@@ -757,7 +759,7 @@ class ProductInheritanceProcessDatamapTest extends FunctionalTestCase
                         }
                     }
                 } else {
-                    throw new \Exception('Product model is missing method : ' . $methodName, 1);
+                    throw new Exception('Product model is missing method : ' . $methodName, 1);
                 }
             }
         }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Domain\Repository;
 
+use PDO;
+use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
@@ -71,21 +73,16 @@ trait CanFindByUidList
             ->getQueryBuilderForTable($table);
 
         $records = $queryBuilder->select(...['uid', $translationSource])
-            ->from($table)
-            ->where(
-                $queryBuilder->expr()->eq(
-                    $languageField,
-                    $queryBuilder->createNamedParameter($languageId, \PDO::PARAM_INT)
-                ),
-                $queryBuilder->expr()->in(
-                    $translationSource,
-                    $queryBuilder->createNamedParameter(
-                        $uids,
-                        \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY
-                    )
-                )
+            ->from($table)->where($queryBuilder->expr()->eq(
+            $languageField,
+            $queryBuilder->createNamedParameter($languageId, PDO::PARAM_INT)
+        ), $queryBuilder->expr()->in(
+            $translationSource,
+            $queryBuilder->createNamedParameter(
+                $uids,
+                Connection::PARAM_INT_ARRAY
             )
-            ->execute()
+        ))->executeQuery()
             ->fetchAllAssociative();
 
         if (count($records) > 0) {

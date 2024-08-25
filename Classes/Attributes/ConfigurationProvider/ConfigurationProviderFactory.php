@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Attributes\ConfigurationProvider;
 
+use UnexpectedValueException;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeRepository;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -35,7 +36,7 @@ class ConfigurationProviderFactory
      *
      * @param Attribute $attribute
      * @return ProviderInterface
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public static function create(int $attributeId, array $attribute = null): ProviderInterface
     {
@@ -49,7 +50,7 @@ class ConfigurationProviderFactory
         $className = self::TYPE_TO_PROVIDER[$attribute['type']] ?? null;
 
         if ($className === null) {
-            throw new \UnexpectedValueException(
+            throw new UnexpectedValueException(
                 'Attribute with type "' . $attribute['type'] . '" not supported.',
                 1568986135545
             );

@@ -24,7 +24,7 @@ namespace Pixelant\PxaProductManager\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use PDO;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -84,18 +84,16 @@ class CategoryRepository extends Repository
                 )
             )
             ->where(
-                $queryBuilder->expr()->in('mm.uid_foreign', "(${subQuery})"),
+                $queryBuilder->expr()->in('mm.uid_foreign', "({$subQuery})"),
                 $queryBuilder->expr()->eq('mm.tablenames', $queryBuilder->createNamedParameter(
                     'tx_pxaproductmanager_domain_model_product',
-                    \PDO::PARAM_STR
+                    PDO::PARAM_STR
                 )),
                 $queryBuilder->expr()->eq('mm.fieldname', $queryBuilder->createNamedParameter(
                     'categories',
                     Connection::PARAM_STR
                 ))
-            )
-            ->groupBy('category.uid')
-            ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            )->groupBy('category.uid')->executeQuery()
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\DataProcessing;
 
+use PDO;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
@@ -103,11 +104,7 @@ class AddProductToMenuProcessor implements DataProcessorInterface
                 ->getQueryBuilderForTable(ProductRepository::TABLE_NAME);
             $row = $queryBuilder
                 ->select('*')
-                ->from(ProductRepository::TABLE_NAME)
-                ->where(
-                    $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($productId, \PDO::PARAM_INT))
-                )
-                ->execute()
+                ->from(ProductRepository::TABLE_NAME)->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($productId, PDO::PARAM_INT)))->executeQuery()
                 ->fetchAssociative();
 
             if ($row) {

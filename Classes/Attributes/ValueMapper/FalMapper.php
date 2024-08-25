@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Attributes\ValueMapper;
 
+use TYPO3\CMS\Core\Resource\FileRepository;
+use TYPO3\CMS\Extbase\Property\Exception;
 use Pixelant\PxaProductManager\Domain\Model\AttributeValue;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
@@ -20,7 +22,7 @@ class FalMapper extends AbstractMapper
     public function map(AttributeValue $attributeValue): void
     {
         if (!empty($attributeValue)) {
-            $fileRepository = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Resource\FileRepository::class);
+            $fileRepository = GeneralUtility::makeInstance(FileRepository::class);
             $fileObjects = $fileRepository->findByRelation(
                 'tx_pxaproductmanager_domain_model_attributevalue',
                 'value',
@@ -48,11 +50,11 @@ class FalMapper extends AbstractMapper
      *
      * @param int $attributeValue
      * @return array
-     * @throws \TYPO3\CMS\Extbase\Property\Exception
+     * @throws Exception
      */
     public function mapToArray(int $attributeValue): array
     {
-        $fileRepository = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Resource\FileRepository::class);
+        $fileRepository = GeneralUtility::makeInstance(FileRepository::class);
         $fileObjects = $fileRepository->findByRelation(
             'tx_pxaproductmanager_domain_model_attributevalue',
             'value',

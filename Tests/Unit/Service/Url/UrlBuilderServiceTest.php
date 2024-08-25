@@ -24,12 +24,17 @@ class UrlBuilderServiceTest extends UnitTestCase
         // @codingStandardsIgnoreStart
         $GLOBALS['TSFE'] = new class($this->createMock(ContentObjectRenderer::class)) extends TypoScriptFrontendController {
             /** @codingStandardsIgnoreEnd */
-            public $cObj;
+            protected $cObj;
 
             /**
              * @param $cObj
              */
             public function __construct($cObj)
+            {
+                $this->cObj = $cObj;
+            }
+
+            public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
             {
                 $this->cObj = $cObj;
             }

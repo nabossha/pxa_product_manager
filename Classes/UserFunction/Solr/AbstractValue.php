@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\UserFunction\Solr;
 
+use InvalidArgumentException;
 use Pixelant\PxaProductManager\Domain\Model\AttributeValue;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeValueRepository;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
@@ -14,7 +15,7 @@ abstract class AbstractValue
     /**
      * @var ContentObjectRenderer
      */
-    public ContentObjectRenderer $cObj;
+    protected ContentObjectRenderer $cObj;
 
     /**
      * @var DataMapper
@@ -47,12 +48,12 @@ abstract class AbstractValue
      *
      * @param array $params
      * @return AttributeValue|null
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function initValue(array $params): ?AttributeValue
     {
         if (empty($params['identifier'])) {
-            throw new \InvalidArgumentException('Identifier could not be empty', 1503304897705);
+            throw new InvalidArgumentException('Identifier could not be empty', 1503304897705);
         }
 
         $identifier = $params['identifier'];
@@ -64,17 +65,22 @@ abstract class AbstractValue
         );
 
         if (!empty($row)) {
-            /** @var \Pixelant\PxaProductManager\Domain\Model\AttributeValue $obj */
+            /** @var AttributeValue $obj */
             $obj = $this->dataMapper->map(
-                \Pixelant\PxaProductManager\Domain\Model\AttributeValue::class,
+                AttributeValue::class,
                 [$row]
             )[0];
 
-            if ($obj instanceof \Pixelant\PxaProductManager\Domain\Model\AttributeValue) {
+            if ($obj instanceof AttributeValue) {
                 return $obj;
             }
         }
 
         return null;
+    }
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
     }
 }

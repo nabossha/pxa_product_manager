@@ -38,9 +38,14 @@ class UrlBuilderService implements UrlBuilderServiceInterface
     ];
 
     /**
-     * @var TypoScriptFrontendController
+     * @var ?ServerRequestInterface
      */
-    protected TypoScriptFrontendController $tsfe;
+    protected ?ServerRequestInterface $request;
+
+    /**
+     * @var ContentObjectRenderer
+     */
+    protected ContentObjectRenderer $contentObjectRenderer;
 
     /**
      * Flag if should force absolute url.
@@ -52,11 +57,12 @@ class UrlBuilderService implements UrlBuilderServiceInterface
     /**
      * Initialize.
      *
-     * @param TypoScriptFrontendController|null $typoScriptFrontendController
+     * @param ContentObjectRenderer $contentObjectRenderer
      */
-    public function __construct(TypoScriptFrontendController $typoScriptFrontendController = null)
+    public function __construct(ContentObjectRenderer $contentObjectRenderer)
     {
-        $this->tsfe = $typoScriptFrontendController ?? $GLOBALS['TSFE'];
+        $this->contentObjectRenderer = $contentObjectRenderer;
+        $this->request = $GLOBALS['TYPO3_REQUEST'] ?? null;
     }
 
     /**
@@ -97,7 +103,6 @@ class UrlBuilderService implements UrlBuilderServiceInterface
      * Generate link.
      *
      * @param int $pageUid
-     * @param int $dokType
      * @param string $additionalParams
      * @return string
      */
@@ -110,12 +115,6 @@ class UrlBuilderService implements UrlBuilderServiceInterface
             'forceAbsoluteUrl' => $this->absolute,
         ];
 
-        /** @var ContentObjectRenderer $contentObjectRenderer */
-        $contentObjectRenderer = GeneralUtility::makeInstance(
-            ContentObjectRenderer::class,
-            $this->tsfe
-        );
-
-        return $contentObjectRenderer->typolink_URL($typolink);
+        return $this->contentObjectRenderer->typolink_URL($typolink);
     }
 }

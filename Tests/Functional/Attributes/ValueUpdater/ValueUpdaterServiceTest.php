@@ -72,9 +72,7 @@ class ValueUpdaterServiceTest extends FunctionalTestCase
         $attributeValueRow = $queryBuilder
             ->select('*')
             ->from('tx_pxaproductmanager_domain_model_attributevalue')
-            ->setMaxResults(1)
-            ->orderBy('uid', 'desc')
-            ->execute()
+            ->setMaxResults(1)->orderBy('uid', 'desc')->executeQuery()
             ->fetch();
 
         self::assertEquals($newValue, $attributeValueRow['value']);
@@ -110,9 +108,7 @@ class ValueUpdaterServiceTest extends FunctionalTestCase
         $attributeValueRow = $queryBuilder
             ->select('*')
             ->from('tx_pxaproductmanager_domain_model_attributevalue')
-            ->setMaxResults(1)
-            ->orderBy('uid', 'desc')
-            ->execute()
+            ->setMaxResults(1)->orderBy('uid', 'desc')->executeQuery()
             ->fetch();
 
         self::assertEquals($expectValue, $attributeValueRow['value'], 'given value: ' . $attributeValueRow['value']);

@@ -6,6 +6,7 @@ namespace Pixelant\PxaProductManager\Backend\FormEngine\FieldControl;
 
 use Pixelant\PxaProductManager\Translate\CanTranslateInBackend;
 use TYPO3\CMS\Backend\Form\AbstractNode;
+use TYPO3\CMS\Core\Page\JavaScriptModuleInstruction;
 
 class AttributeIdentifierControl extends AbstractNode
 {
@@ -23,7 +24,7 @@ class AttributeIdentifierControl extends AbstractNode
             'linkAttributes' => [
                 'class' => 'attributeIdentifier ',
             ],
-            'requireJsModules' => ['TYPO3/CMS/PxaProductManager/Backend/AttributeIdentifierControl'],
+            'module' => JavaScriptModuleInstruction::forRequireJS('TYPO3/CMS/PxaProductManager/Backend/AttributeIdentifierControl'),
         ];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Pixelant\PxaProductManager\LinkHandler;
 
+use TYPO3\CMS\Backend\Form\Element\LinkElement;
 use Pixelant\PxaProductManager\Translate\CanTranslateInBackend;
-use TYPO3\CMS\Backend\Form\Element\InputLinkElement;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
 use TYPO3\CMS\Core\Imaging\Icon;
 use TYPO3\CMS\Core\Imaging\IconFactory;
@@ -37,14 +37,14 @@ class LinkHandlingFormData
      * @param array $linkData
      * @param array $linkParts
      * @param array $data
-     * @param InputLinkElement $inputLinkElement
+     * @param LinkElement $inputLinkElement
      * @return array
      */
     public function getFormData(
         array $linkData,
         array $linkParts,
         array $data,
-        InputLinkElement $inputLinkElement
+        LinkElement $inputLinkElement
     ): array {
         if (isset($linkData['category']) || isset($linkData['product'])) {
             if (isset($linkData['product'])) {

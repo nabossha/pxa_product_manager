@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Command;
 
+use PDO;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeRepository;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeValueRepository;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
@@ -80,14 +81,10 @@ class RemoveOrphanAttributeValuesCommand extends Command
         $queryBuilder->getRestrictions()->removeAll();
         $count = $queryBuilder
             ->count('*')
-            ->from(self::ATTRIBUTEVALUE_TABLE, 'attrval')
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'product',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
-                )
-            )
-            ->execute()
+            ->from(self::ATTRIBUTEVALUE_TABLE, 'attrval')->where($queryBuilder->expr()->eq(
+            'product',
+            $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+        ))->executeQuery()
             ->fetchColumn(0);
 
         return $count;
@@ -109,7 +106,7 @@ class RemoveOrphanAttributeValuesCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'product',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
                 )
             )
             ->execute();

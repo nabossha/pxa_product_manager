@@ -103,9 +103,7 @@ class ProductsQueryDispatcher
     {
         $queryBuilder = clone $this->queryBuilder;
 
-        return (int)$queryBuilder
-            ->count('tx_pxaproductmanager_domain_model_product.uid')
-            ->execute()
+        return (int)$queryBuilder->count('tx_pxaproductmanager_domain_model_product.uid')->executeQuery()
             ->fetchColumn(0);
     }
 

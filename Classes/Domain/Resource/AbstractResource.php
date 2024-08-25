@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Domain\Resource;
 
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use Pixelant\PxaProductManager\Event\Resource\ResourceToArray;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
@@ -92,7 +93,7 @@ abstract class AbstractResource implements ResourceInterface
         if ($value instanceof ObjectStorage) {
             $data = [];
             foreach ($value as $object) {
-                if ($object instanceof \TYPO3\CMS\Extbase\Domain\Model\FileReference) {
+                if ($object instanceof FileReference) {
                     $data[] = '/' . ltrim($object->getOriginalResource()->getPublicUrl(), '/');
                 }
             }

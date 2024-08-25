@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\DTO\ProductDemand;
@@ -43,7 +44,7 @@ class CustomProductController extends AbstractController
     /**
      * Selection of products.
      */
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         switch ($this->settings['customProductsList']['mode']) {
             case 'products':
@@ -60,6 +61,7 @@ class CustomProductController extends AbstractController
         }
 
         $this->view->assignMultiple(compact('products'));
+        return $this->htmlResponse();
     }
 
     /**

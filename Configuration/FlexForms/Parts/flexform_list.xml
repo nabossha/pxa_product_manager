@@ -4,9 +4,7 @@
             <ROOT>
                 <el>
                     <settings.list.entryNavigationCategory>
-                        <TCEforms>
-                            <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.list.entry_navigation_category</label>
-                            <config>
+                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.list.entry_navigation_category</label><config>
                                 <type>select</type>
                                 <renderType>selectTree</renderType>
                                 <treeConfig>
@@ -24,7 +22,6 @@
                                 <minitems>1</minitems>
                                 <maxitems>1</maxitems>
                             </config>
-                        </TCEforms>
                     </settings.list.entryNavigationCategory>
                 </el>
             </ROOT>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Tests\Unit\Domain\Collection;
 
+use InvalidArgumentException;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Arrayable;
 use Pixelant\PxaProductManager\Domain\Collection\Collection;
@@ -19,7 +20,7 @@ class CollectionTest extends UnitTestCase
      */
     public function collectionThrownExceptionIfNotIterableArgumentGiven(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         new Collection('test');
     }

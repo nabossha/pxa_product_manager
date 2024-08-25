@@ -24,7 +24,9 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
+use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -76,9 +78,9 @@ class Attribute extends AbstractEntity
     protected string $identifier = '';
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Option>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<Option>
      */
     protected ObjectStorage $options;
 
@@ -113,8 +115,8 @@ class Attribute extends AbstractEntity
     /**
      * Image.
      *
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var FileReference
+     * @Lazy
      */
     protected $image;
 
@@ -148,7 +150,7 @@ class Attribute extends AbstractEntity
          * It will be rewritten on each save in the extension builder
          * You may modify the constructor of this class instead
          */
-        $this->options = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $this->options = new ObjectStorage();
     }
 
     /**
@@ -385,10 +387,10 @@ class Attribute extends AbstractEntity
      * Sets the image.
      *
      * @api
-     * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $image
+     * @param FileReference $image
      * @return Attribute
      */
-    public function setImage(\TYPO3\CMS\Extbase\Domain\Model\FileReference $image): self
+    public function setImage(FileReference $image): self
     {
         $this->image = $image;
 
@@ -399,7 +401,7 @@ class Attribute extends AbstractEntity
      * Gets the image.
      *
      * @api
-     * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+     * @return FileReference
      */
     public function getImage()
     {

@@ -2,6 +2,7 @@
 
 namespace Pixelant\PxaProductManager\Domain\Model;
 
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use TYPO3\CMS\Extbase\Domain\Model\Category as CategoryExtbase;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
@@ -41,7 +42,7 @@ class Category extends CategoryExtbase
 
     /**
      * @var \Pixelant\PxaProductManager\Domain\Model\Category
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @Lazy
      */
     protected $parent = null;
 
@@ -63,8 +64,8 @@ class Category extends CategoryExtbase
     /**
      * Image. Typed property was only fixed in typo3 10 for lazy loading.
      *
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var FileReference
+     * @Lazy
      */
     protected $image = null;
 
@@ -81,8 +82,8 @@ class Category extends CategoryExtbase
     /**
      * Banner Image.
      *
-     * @var \TYPO3\CMS\Extbase\Domain\Model\FileReference
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var FileReference
+     * @Lazy
      */
     protected $bannerImage = null;
 
@@ -92,14 +93,14 @@ class Category extends CategoryExtbase
     protected float $taxRate = 0.00;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
+     * @Lazy
      */
     protected ObjectStorage $subCategories;
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @var ObjectStorage<Product>
+     * @Lazy
      */
     protected ObjectStorage $products;
 

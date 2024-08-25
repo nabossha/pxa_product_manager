@@ -1,9 +1,11 @@
 <?php
 
-defined('TYPO3_MODE') || die;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+defined('TYPO3') || die;
 
 (function (): void {
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+    ExtensionUtility::registerPlugin(
         'pxa_product_manager',
         'ProductList',
         'Product List',
@@ -13,12 +15,12 @@ defined('TYPO3_MODE') || die;
 
     $pluginSignature = 'pxaproductmanager_productlist';
     $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignature] = 'pi_flexform';
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue(
+    ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
         'FILE:EXT:pxa_product_manager/Configuration/FlexForms/flexform_product_list.xml'
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+    ExtensionUtility::registerPlugin(
         'pxa_product_manager',
         'ProductShow',
         'Product Show',
@@ -28,12 +30,12 @@ defined('TYPO3_MODE') || die;
 
     $pluginSignature = 'pxaproductmanager_productshow';
     $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignature] = 'pi_flexform';
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue(
+    ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
         'FILE:EXT:pxa_product_manager/Configuration/FlexForms/flexform_product_show.xml'
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+    ExtensionUtility::registerPlugin(
         'pxa_product_manager',
         'ProductRender',
         'Product Render',
@@ -44,12 +46,12 @@ defined('TYPO3_MODE') || die;
     $pluginSignature = 'pxaproductmanager_productrender';
     $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignature] = 'pi_flexform';
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue(
+    ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
         'FILE:EXT:pxa_product_manager/Configuration/FlexForms/flexform_product_render.xml'
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
+    ExtensionUtility::registerPlugin(
         'pxa_product_manager',
         'CustomProductList',
         'Custom Product List',
@@ -60,7 +62,7 @@ defined('TYPO3_MODE') || die;
     $pluginSignature = 'pxaproductmanager_customproductlist';
     $GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist'][$pluginSignature] = 'pi_flexform';
 
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPiFlexFormValue(
+    ExtensionManagementUtility::addPiFlexFormValue(
         $pluginSignature,
         'FILE:EXT:pxa_product_manager/Configuration/FlexForms/flexform_product_custom_list.xml'
     );

@@ -39,7 +39,7 @@ class Collection implements Arrayable
             $list = GeneralUtility::trimExplode(',', $list, true);
         }
         if (!is_array($list)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('Expect list to be of type string or array, "%s" given', gettype($list)),
                 1584623916077
             );

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Tests\Unit\Service\Category;
 
+use InvalidArgumentException;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Service\Category\TreeService;
@@ -81,7 +82,7 @@ class TreeServiceTest extends UnitTestCase
         if ($isValid) {
             self::assertNull($this->callInaccessibleMethod($this->subject, 'validateType', $value));
         } else {
-            $this->expectException(\InvalidArgumentException::class);
+            $this->expectException(InvalidArgumentException::class);
             $this->callInaccessibleMethod($this->subject, 'validateType', $value);
         }
     }

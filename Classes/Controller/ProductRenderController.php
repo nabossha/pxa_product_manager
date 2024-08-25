@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use Psr\Http\Message\ResponseInterface;
+use TYPO3\CMS\Extbase\Http\ForwardResponse;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Domain\Repository\FilterRepository;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -29,18 +31,14 @@ class ProductRenderController extends AbstractController
      *
      * @param Product|null $product
      */
-    public function initAction(Product $product = null): void
+    public function initAction(Product $product = null): ResponseInterface
     {
         if ($product === null) {
-            $this->forward('list');
+            return new ForwardResponse('list');
         } else {
-            $this->forward(
-                'show',
-                'ProductRender',
-                $this->request->getControllerExtensionName(),
-                $this->request->getArguments()
-            );
+            return (new ForwardResponse('show'))->withControllerName('ProductRender')->withExtensionName($this->request->getControllerExtensionName())->withArguments($this->request->getArguments());
         }
+        return $this->htmlResponse();
     }
 
     /**
@@ -48,7 +46,7 @@ class ProductRenderController extends AbstractController
      *
      * @return void
      */
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         $filters = [];
         $filterIds = $this->settings['filtering']['filters'] ?? [];
@@ -61,6 +59,7 @@ class ProductRenderController extends AbstractController
         $this->view->assign('filters', $filters);
         $this->view->assign('orderBy', json_encode($this->createOrderByArray()));
         $this->view->assign('settingsJson', json_encode($this->lazyListSettings()));
+        return $this->htmlResponse();
     }
 
     /**
@@ -68,13 +67,14 @@ class ProductRenderController extends AbstractController
      *
      * @param Product $product
      */
-    public function showAction(Product $product): void
+    public function showAction(Product $product): ResponseInterface
     {
         $templateLayout = $product->getProductType()->getTemplateLayout();
         if ($templateLayout !== '') {
             $this->view->setTemplatePathAndFilename($templateLayout);
         }
         $this->view->assignMultiple(compact('product'));
+        return $this->htmlResponse();
     }
 
     /**

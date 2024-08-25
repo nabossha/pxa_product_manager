@@ -16,7 +16,7 @@ class Url
     /**
      * @var ContentObjectRenderer
      */
-    public ContentObjectRenderer $cObj;
+    protected ContentObjectRenderer $cObj;
 
     /**
      * @var UrlBuilderServiceInterface
@@ -64,5 +64,10 @@ class Url
         $dataMapper = $this->objectManager->get(DataMapper::class);
 
         return $dataMapper->map(Product::class, [$this->cObj->data])[0] ?? null;
+    }
+
+    public function setContentObjectRenderer(ContentObjectRenderer $cObj): void
+    {
+        $this->cObj = $cObj;
     }
 }

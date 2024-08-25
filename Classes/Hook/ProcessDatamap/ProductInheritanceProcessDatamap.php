@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Hook\ProcessDatamap;
 
-use Doctrine\DBAL\FetchMode;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
+use PDO;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Utility\DataInheritanceUtility;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
@@ -172,7 +173,7 @@ class ProductInheritanceProcessDatamap
                 $inheritedData
             ),
             '',
-            FlashMessage::INFO,
+            AbstractMessage::INFO,
             true
         );
 
@@ -236,19 +237,14 @@ class ProductInheritanceProcessDatamap
 
             return $queryBuilder
                 ->select('uid')
-                ->from(ProductRepository::TABLE_NAME)
-                ->where(
-                    $queryBuilder->expr()->eq(
-                        'parent',
-                        $queryBuilder->createNamedParameter($identifier)
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'sys_language_uid',
-                        $queryBuilder->createNamedParameter($language, \PDO::PARAM_INT)
-                    )
-                )
-                ->execute()
-                ->fetchAll(FetchMode::COLUMN, 0);
+                ->from(ProductRepository::TABLE_NAME)->where($queryBuilder->expr()->eq(
+                'parent',
+                $queryBuilder->createNamedParameter($identifier)
+            ), $queryBuilder->expr()->eq(
+                'sys_language_uid',
+                $queryBuilder->createNamedParameter($language, PDO::PARAM_INT)
+            ))->executeQuery()
+                ->fetchFirstColumn();
         }
 
         return [];

@@ -2,6 +2,10 @@
 
 namespace Pixelant\PxaProductManager\ViewHelpers;
 
+use Closure;
+use Throwable;
+use Exception;
+use DOMElement;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
@@ -66,14 +70,14 @@ class SvgViewHelper extends AbstractViewHelper
      * Prepare svg output.
      *
      * @param array $arguments
-     * @param \Closure $renderChildrenClosure
+     * @param Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      *
      * @return string svg content
      */
     public static function renderStatic(
         array $arguments,
-        \Closure $renderChildrenClosure,
+        Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
         $relativeSrc = $arguments['src'] ?? ltrim($arguments['source'], '/') ?? '';
@@ -86,7 +90,7 @@ class SvgViewHelper extends AbstractViewHelper
         if (!empty($relativeSrc)) {
             try {
                 $absoluteSrc = self::getValidatedAbsoluteFile($relativeSrc);
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 return $th->getMessage();
             }
         }
@@ -99,7 +103,7 @@ class SvgViewHelper extends AbstractViewHelper
                         $extension
                     )
                 );
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $absoluteSrc = self::getValidatedAbsoluteFile(
                     'EXT:pxa_product_manager/Resources/Public/Icons/FileIcons/default.svg'
                 );
@@ -115,7 +119,7 @@ class SvgViewHelper extends AbstractViewHelper
      * @param string $absoluteSrc
      * @param array $arguments
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function getInlineSvg(string $absoluteSrc, array $arguments): string
     {
@@ -150,11 +154,11 @@ class SvgViewHelper extends AbstractViewHelper
     /**
      * Set attributes on DOMElement.
      *
-     * @param \DOMElement $domXml
+     * @param DOMElement $domXml
      * @param array $arguments
      * @return void
      */
-    protected static function setElementAttributes(\DOMElement $domXml, array $arguments): void
+    protected static function setElementAttributes(DOMElement $domXml, array $arguments): void
     {
         if (!empty($arguments['class'])) {
             if (empty($domXml->getAttribute('class'))) {
@@ -188,23 +192,23 @@ class SvgViewHelper extends AbstractViewHelper
      *
      * @param string $relativeSrc
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected static function getValidatedAbsoluteFile(string $relativeSrc): string
     {
         $absoluteSrc = GeneralUtility::getFileAbsFileName($relativeSrc);
 
         if (!file_exists($absoluteSrc)) {
-            throw new \Exception('<!-- unable to render file: ' . $relativeSrc . ' (missing) -->', 1647596185);
+            throw new Exception('<!-- unable to render file: ' . $relativeSrc . ' (missing) -->', 1647596185);
         }
 
         if (!GeneralUtility::isAllowedAbsPath($absoluteSrc)) {
-            throw new \Exception('<!-- unable to render file: ' . $relativeSrc . ' (disallowed) -->', 1647596185);
+            throw new Exception('<!-- unable to render file: ' . $relativeSrc . ' (disallowed) -->', 1647596185);
         }
 
         $finfo = \mime_content_type($absoluteSrc);
         if (!in_array($finfo, ['image/svg+xml', 'image/svg'], true)) {
-            throw new \Exception('<!-- unable to render file: ' . $relativeSrc . ' (' . $finfo . ') -->', 1647596185);
+            throw new Exception('<!-- unable to render file: ' . $relativeSrc . ' (' . $finfo . ') -->', 1647596185);
         }
 
         return $absoluteSrc;

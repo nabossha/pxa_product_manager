@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Tests\Utility;
 
+use ReflectionClass;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -51,7 +52,7 @@ class TestsUtility
 
     public static function createEntity(string $className, $properties, callable $callback = null): AbstractEntity
     {
-        /** @var \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $entity */
+        /** @var AbstractEntity $entity */
         $entity = new $className();
 
         if (is_int($properties)) {
@@ -83,7 +84,7 @@ class TestsUtility
 
     public static function getProtectedVarValue($object, $property)
     {
-        $reflector = new \ReflectionClass($object);
+        $reflector = new ReflectionClass($object);
         $property = $reflector->getProperty($property);
         $property->setAccessible(true);
 

@@ -26,7 +26,7 @@ namespace Pixelant\PxaProductManager\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use PDO;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -65,7 +65,7 @@ class AttributeValueRepository extends Repository
                 )
             )
             ->where(
-                $queryBuilder->expr()->in('attributevalue.product', "(${subQuery})"),
+                $queryBuilder->expr()->in('attributevalue.product', "({$subQuery})"),
                 $queryBuilder->expr()->in(
                     'attributes.type',
                     $queryBuilder->createNamedParameter(
@@ -73,10 +73,8 @@ class AttributeValueRepository extends Repository
                         Connection::PARAM_INT_ARRAY
                     )
                 )
-            )
-            ->groupBy('attributevalue.value')
-            ->execute()
-            ->fetchAll(\PDO::FETCH_COLUMN);
+            )->groupBy('attributevalue.value')->executeQuery()
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**
@@ -96,11 +94,9 @@ class AttributeValueRepository extends Repository
             ->select('*')
             ->from('tx_pxaproductmanager_domain_model_attributevalue')
             ->where(
-                $expr->eq('product', $queryBuilder->createNamedParameter($productUid, \PDO::PARAM_INT)),
-                $expr->eq('attribute', $queryBuilder->createNamedParameter($attributeUid, \PDO::PARAM_INT))
-            )
-            ->setMaxResults(1)
-            ->execute()
+                $expr->eq('product', $queryBuilder->createNamedParameter($productUid, PDO::PARAM_INT)),
+                $expr->eq('attribute', $queryBuilder->createNamedParameter($attributeUid, PDO::PARAM_INT))
+            )->setMaxResults(1)->executeQuery()
             ->fetch();
 
         return is_array($row) ? $row : null;
@@ -127,15 +123,10 @@ class AttributeValueRepository extends Repository
                 'tx_pxaproductmanager_domain_model_attribute',
                 'attribute',
                 $expr->eq('attributevalue.attribute', $queryBuilder->quoteIdentifier('attribute.uid'))
-            )
-            ->where(
-                $expr->eq('attributevalue.product', $queryBuilder->createNamedParameter($productUid, \PDO::PARAM_INT)),
-                $expr->eq(
-                    'attribute.identifier',
-                    $queryBuilder->createNamedParameter($identifier, \PDO::PARAM_STR)
-                )
-            )
-            ->execute()
+            )->where($expr->eq('attributevalue.product', $queryBuilder->createNamedParameter($productUid, PDO::PARAM_INT)), $expr->eq(
+            'attribute.identifier',
+            $queryBuilder->createNamedParameter($identifier, PDO::PARAM_STR)
+        ))->executeQuery()
             ->fetch();
 
         return is_array($row) ? $row : null;

@@ -26,7 +26,11 @@ namespace Pixelant\PxaProductManager\Domain\Model;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
+use TYPO3\CMS\Extbase\Annotation\ORM\Transient;
+use TYPO3\CMS\Extbase\Annotation\ORM\Cascade;
+use TYPO3\CMS\Extbase\Domain\Model\FileReference;
+use Exception;
 use DateTime;
 use Pixelant\PxaProductManager\Attributes\ValueUpdater\UpdaterInterface;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
@@ -122,86 +126,86 @@ class Product extends AbstractEntity
     protected $tstamp;
 
     /**
-     * @var \Pixelant\PxaProductManager\Domain\Model\ProductType|null
+     * @var ProductType|null
      */
     protected $productType = null;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
+     * @Lazy
+     * @var ObjectStorage<Category>
      */
     protected ObjectStorage $categories;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
+     * @Lazy
      * @var Product|null
      */
     protected $parent = null;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Transient
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
+     * @Lazy
+     * @Transient
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
      */
     protected ?ObjectStorage $children = null;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
+     * @Lazy
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
      */
     protected ObjectStorage $relatedProducts;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
+     * @Lazy
+     * @var ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Product>
      */
     protected ObjectStorage $accessories;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Image>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<Image>
      */
     protected ObjectStorage $images;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeFile>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<AttributeFile>
      */
     protected ObjectStorage $attributesFiles;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Link>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<Link>
      */
     protected ObjectStorage $links;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<FileReference>
      */
     protected ObjectStorage $falLinks;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<FileReference>
      */
     protected ObjectStorage $assets;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade("remove")
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\AttributeValue>
+     * @Lazy
+     * @Cascade("remove")
+     * @var ObjectStorage<AttributeValue>
      */
     protected ObjectStorage $attributesValues;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Page>
+     * @Lazy
+     * @var ObjectStorage<Page>
      */
     protected ObjectStorage $singleviewPage;
 
@@ -1020,7 +1024,7 @@ class Product extends AbstractEntity
         } elseif (method_exists($this->images, 'current')) {
             try {
                 $image = $this->images->current();
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $image = null;
             }
         }

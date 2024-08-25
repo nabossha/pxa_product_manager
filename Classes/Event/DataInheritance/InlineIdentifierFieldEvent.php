@@ -21,7 +21,7 @@ class InlineIdentifierFieldEvent implements StoppableEventInterface
     /**
      * @var string
      */
-    protected $field = '';
+    protected $field = 'uid_local';
 
     /**
      * @var bool
@@ -34,7 +34,6 @@ class InlineIdentifierFieldEvent implements StoppableEventInterface
     public function __construct(string $table)
     {
         $this->table = $table;
-        $this->field = 'uid_local';
     }
 
     public function isPropagationStopped(): bool

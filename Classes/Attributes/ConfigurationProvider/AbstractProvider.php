@@ -79,10 +79,8 @@ abstract class AbstractProvider implements ProviderInterface
             'exclude' => false,
             'label' => '',
             'config' => [
-                'type' => 'input',
-                'default' => 0,
-                'renderType' => 'inputDateTime',
-                'eval' => 'datetime,int',
+                'type' => 'datetime',
+                'format' => 'datetime',
             ],
         ],
 

@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Attributes\ValueUpdater;
 
+use TYPO3\CMS\Core\SingletonInterface;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 
 /**
  * Interface for product attribute value update.
  */
-interface UpdaterInterface extends \TYPO3\CMS\Core\SingletonInterface
+interface UpdaterInterface extends SingletonInterface
 {
     /**
      * Update attribute value.

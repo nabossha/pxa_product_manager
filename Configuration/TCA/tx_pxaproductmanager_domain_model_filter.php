@@ -1,6 +1,8 @@
 <?php
 
-defined('TYPO3_MODE') || die('Access denied.');
+use Pixelant\PxaProductManager\Domain\Model\Filter;
+use Pixelant\PxaProductManager\Domain\Model\Attribute;
+defined('TYPO3') || die('Access denied.');
 
 return (function () {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
@@ -12,8 +14,6 @@ return (function () {
             'label_alt' => 'label',
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
-            'cruser_id' => 'cruser_id',
-            'dividers2tabs' => true,
 
             'languageField' => 'sys_language_uid',
             'transOrigPointerField' => 'l10n_parent',
@@ -43,26 +43,13 @@ return (function () {
             'sys_language_uid' => [
                 'exclude' => true,
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-                'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple',
-                        ],
-                    ],
-                    'default' => 0,
-                ],
+                'config' => ['type' => 'language'],
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'group',
-                    'internal_type' => 'db',
                     'allowed' => 'tx_pxaproductmanager_domain_model_filter',
                     'size' => 1,
                     'maxitems' => 1,
@@ -84,8 +71,7 @@ return (function () {
                     'renderType' => 'checkboxToggle',
                     'items' => [
                         [
-                            0 => '',
-                            1 => '',
+                            'label' => '',
                             'invertStateDisplay' => true,
                         ],
                     ],
@@ -100,9 +86,9 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        ['Categories', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_CATEGORIES],
-                        ['Attribute', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_ATTRIBUTES],
-                        ['Attribute min-max (if applicable, require only numeric attribute values)', \Pixelant\PxaProductManager\Domain\Model\Filter::TYPE_ATTRIBUTES_MINMAX],
+                        ['label' => 'Categories', 'value' => Filter::TYPE_CATEGORIES],
+                        ['label' => 'Attribute', 'value' => Filter::TYPE_ATTRIBUTES],
+                        ['label' => 'Attribute min-max (if applicable, require only numeric attribute values)', 'value' => Filter::TYPE_ATTRIBUTES_MINMAX],
                     ],
                     'size' => 1,
                     'minitems' => 1,
@@ -117,9 +103,9 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        [$ll . 'tx_pxaproductmanager_domain_model_filter.gui_type.checkbox', 'checkbox'],
-                        [$ll . 'tx_pxaproductmanager_domain_model_filter.gui_type.option', 'option'],
-                        [$ll . 'tx_pxaproductmanager_domain_model_filter.gui_type.select', 'select'],
+                        ['label' => $ll . 'tx_pxaproductmanager_domain_model_filter.gui_type.checkbox', 'value' => 'checkbox'],
+                        ['label' => $ll . 'tx_pxaproductmanager_domain_model_filter.gui_type.option', 'value' => 'option'],
+                        ['label' => $ll . 'tx_pxaproductmanager_domain_model_filter.gui_type.select', 'value' => 'select'],
                     ],
                     'size' => 1,
                     'minitems' => 1,
@@ -134,9 +120,9 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        [$ll . 'tx_pxaproductmanager_domain_model_filter.gui_state.collapsed', 'collapsed'],
-                        [$ll . 'tx_pxaproductmanager_domain_model_filter.gui_state.expanded', 'expanded'],
-                        [$ll . 'tx_pxaproductmanager_domain_model_filter.gui_state.plain', 'plain'],
+                        ['label' => $ll . 'tx_pxaproductmanager_domain_model_filter.gui_state.collapsed', 'value' => 'collapsed'],
+                        ['label' => $ll . 'tx_pxaproductmanager_domain_model_filter.gui_state.expanded', 'value' => 'expanded'],
+                        ['label' => $ll . 'tx_pxaproductmanager_domain_model_filter.gui_state.plain', 'value' => 'plain'],
                     ],
                     'size' => 1,
                     'minitems' => 1,
@@ -150,7 +136,8 @@ return (function () {
                 'config' => [
                     'type' => 'input',
                     'size' => 30,
-                    'eval' => 'trim,required',
+                    'eval' => 'trim',
+                    'required' => true,
                 ],
             ],
             'label' => [
@@ -193,8 +180,8 @@ return (function () {
                     'renderType' => 'selectSingle',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_attribute',
                     'foreign_table_where' => ' AND tx_pxaproductmanager_domain_model_attribute.type IN ('
-                        . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_DROPDOWN . ','
-                        . \Pixelant\PxaProductManager\Domain\Model\Attribute::ATTRIBUTE_TYPE_MULTISELECT . ')' .
+                        . Attribute::ATTRIBUTE_TYPE_DROPDOWN . ','
+                        . Attribute::ATTRIBUTE_TYPE_MULTISELECT . ')' .
                         ' AND (tx_pxaproductmanager_domain_model_attribute.sys_language_uid = 0 OR tx_pxaproductmanager_domain_model_attribute.l10n_parent = 0) ORDER BY tx_pxaproductmanager_domain_model_attribute.sorting',
                     'minitems' => 1,
                     'maxitems' => 1,
@@ -211,8 +198,8 @@ return (function () {
                     'renderType' => 'selectSingle',
                     'default' => 'and',
                     'items' => [
-                        ['And', \Pixelant\PxaProductManager\Domain\Model\Filter::CONJUNCTION_AND],
-                        ['Or', \Pixelant\PxaProductManager\Domain\Model\Filter::CONJUNCTION_OR],
+                        ['label' => 'And', 'value' => Filter::CONJUNCTION_AND],
+                        ['label' => 'Or', 'value' => Filter::CONJUNCTION_OR],
                     ],
                 ],
             ],

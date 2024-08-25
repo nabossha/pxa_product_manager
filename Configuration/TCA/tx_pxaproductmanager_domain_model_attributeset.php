@@ -1,6 +1,6 @@
 <?php
 
-defined('TYPO3_MODE') || die('Access denied.');
+defined('TYPO3') || die('Access denied.');
 
 return (function () {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:tx_pxaproductmanager_domain_model_attributeset';
@@ -11,8 +11,6 @@ return (function () {
             'label' => 'name',
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
-            'cruser_id' => 'cruser_id',
-            'dividers2tabs' => true,
             'sortby' => 'sorting',
             'origUid' => 't3_origuid',
             'transOrigPointerField' => 'l10n_parent',
@@ -46,26 +44,13 @@ return (function () {
             'sys_language_uid' => [
                 'exclude' => true,
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-                'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple',
-                        ],
-                    ],
-                    'default' => 0,
-                ],
+                'config' => ['type' => 'language'],
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'group',
-                    'internal_type' => 'db',
                     'allowed' => 'tx_pxaproductmanager_domain_model_attributeset',
                     'size' => 1,
                     'maxitems' => 1,
@@ -86,8 +71,7 @@ return (function () {
                     'renderType' => 'checkboxToggle',
                     'items' => [
                         [
-                            0 => '',
-                            1 => '',
+                            'label' => '',
                             'invertStateDisplay' => true,
                         ],
                     ],
@@ -98,7 +82,8 @@ return (function () {
                 'config' => [
                     'type' => 'input',
                     'size' => 30,
-                    'eval' => 'trim,required',
+                    'eval' => 'trim',
+                    'required' => true,
                 ],
             ],
             'label' => [
@@ -123,10 +108,11 @@ return (function () {
                         'tablenames' => 'tx_pxaproductmanager_domain_model_attribute',
                         'fieldname' => 'attributes',
                     ],
+                    'multiple' => 0,
+                    'MM_hasUidField' => true,
                     'size' => 10,
                     'autoSizeMax' => 30,
                     'maxitems' => 9999,
-                    'multiple' => 0,
                     'fieldControl' => [
                         'editPopup' => [
                             'disabled' => false,
@@ -147,7 +133,7 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        [$ll . '.layout.default', 'Default'],
+                        ['label' => $ll . '.layout.default', 'value' => 'Default'],
                     ],
                     'default' => 'Default',
                     'behaviour' => [
@@ -166,10 +152,11 @@ return (function () {
                         'tablenames' => 'tx_pxaproductmanager_domain_model_producttype',
                         'fieldname' => 'product_type',
                     ],
+                    'multiple' => 0,
+                    'MM_hasUidField' => true,
                     'size' => 10,
                     'autoSizeMax' => 30,
                     'maxitems' => 9999,
-                    'multiple' => 0,
                     'fieldControl' => [
                         'editPopup' => [
                             'disabled' => false,

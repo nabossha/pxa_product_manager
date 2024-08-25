@@ -1,6 +1,9 @@
 <?php
 
-defined('TYPO3_MODE') || die('Access denied.');
+use Pixelant\PxaProductManager\Utility\TcaUtility;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Resource\File;
+defined('TYPO3') || die('Access denied.');
 
 return (function () {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
@@ -11,8 +14,6 @@ return (function () {
             'label' => 'name',
             'tstamp' => 'tstamp',
             'crdate' => 'crdate',
-            'cruser_id' => 'cruser_id',
-            'dividers2tabs' => true,
             'sortby' => 'sorting',
             'versioningWS' => true,
             'origUid' => 't3_origuid',
@@ -47,26 +48,13 @@ return (function () {
             'sys_language_uid' => [
                 'exclude' => true,
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
-                'config' => [
-                    'type' => 'select',
-                    'renderType' => 'selectSingle',
-                    'special' => 'languages',
-                    'items' => [
-                        [
-                            'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
-                            -1,
-                            'flags-multiple',
-                        ],
-                    ],
-                    'default' => 0,
-                ],
+                'config' => ['type' => 'language'],
             ],
             'l10n_parent' => [
                 'displayCond' => 'FIELD:sys_language_uid:>:0',
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
                 'config' => [
                     'type' => 'group',
-                    'internal_type' => 'db',
                     'allowed' => 'tx_pxaproductmanager_domain_model_product',
                     'size' => 1,
                     'maxitems' => 1,
@@ -87,8 +75,7 @@ return (function () {
                     'renderType' => 'checkboxToggle',
                     'items' => [
                         [
-                            0 => '',
-                            1 => '',
+                            'label' => '',
                             'invertStateDisplay' => true,
                         ],
                     ],
@@ -98,9 +85,7 @@ return (function () {
                 'exclude' => true,
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.starttime',
                 'config' => [
-                    'type' => 'input',
-                    'renderType' => 'inputDateTime',
-                    'eval' => 'datetime,int',
+                    'type' => 'datetime',
                     'default' => 0,
                     'behaviour' => [
                         'allowLanguageSynchronization' => true,
@@ -111,9 +96,7 @@ return (function () {
                 'exclude' => true,
                 'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.endtime',
                 'config' => [
-                    'type' => 'input',
-                    'renderType' => 'inputDateTime',
-                    'eval' => 'datetime,int',
+                    'type' => 'datetime',
                     'default' => 0,
                     'range' => [
                         'upper' => mktime(0, 0, 0, 1, 1, 2038),
@@ -129,7 +112,8 @@ return (function () {
                 'config' => [
                     'type' => 'input',
                     'size' => 30,
-                    'eval' => 'trim,required',
+                    'eval' => 'trim',
+                    'required' => true,
                 ],
             ],
             'slug' => [
@@ -162,22 +146,22 @@ return (function () {
                 'exclude' => false,
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.price',
                 'config' => [
-                    'type' => 'input',
+                    'type' => 'number',
                     'size' => 5,
-                    'eval' => 'double2',
+                    'format' => 'decimal',
                 ],
             ],
             'tax_rate' => [
                 'exclude' => false,
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.tax_rate',
                 'config' => [
-                    'type' => 'input',
+                    'type' => 'number',
                     'size' => 5,
                     'range' => [
                         'lower' => 0,
                         'upper' => 100,
                     ],
-                    'eval' => 'double2',
+                    'format' => 'decimal',
                 ],
             ],
             'description' => [
@@ -204,9 +188,6 @@ return (function () {
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_attributevalue',
                     'foreign_field' => 'product',
                     'maxitems' => 9999,
-                    'foreign_types' => [
-                        ['showitem' => 'value'],
-                    ],
                     'appearance' => [
                         'collapseAll' => 0,
                         'levelLinksPosition' => 'none',
@@ -223,6 +204,13 @@ return (function () {
                             'localize' => false,
                         ],
                     ],
+                    'overrideChildTca' => [
+                        'types' => [
+                        [
+                            'showitem' => 'value'
+                        ],
+                     ]
+                    ],
                 ],
             ],
             'related_products' => [
@@ -230,14 +218,9 @@ return (function () {
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.related_products',
                 'config' => [
                     'type' => 'group',
-                    'internal_type' => 'db',
                     'allowed' => 'tx_pxaproductmanager_domain_model_product',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_product',
-                    'suggestOptions' => [
-                        'tx_pxaproductmanager_domain_model_product' => \Pixelant\PxaProductManager\Utility\TcaUtility::getRelatedProductsForeignTableWherePid() .
-                            ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' .
-                            ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
-                    ],
+
                     'MM' => 'tx_pxaproductmanager_product_product_mm',
                     'MM_match_fields' => [
                         'tablenames' => 'tx_pxaproductmanager_domain_model_product',
@@ -256,7 +239,7 @@ return (function () {
             'images' => [
                 'exclude' => false,
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.images',
-                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
+                'config' => ExtensionManagementUtility::getFileFieldTCAConfig(
                     'images',
                     [
                         'appearance' => [
@@ -268,12 +251,12 @@ return (function () {
                         ],
                         'overrideChildTca' => [
                             'types' => [
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_UNKNOWN => [
+                                File::FILETYPE_UNKNOWN => [
                                     'showitem' => '
                                 --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                                 --palette--;;filePalette',
                                 ],
-                                \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                                File::FILETYPE_IMAGE => [
                                     'showitem' => '
                                 --palette--;;pxaProductManagerPalette,
                                 --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
@@ -288,7 +271,7 @@ return (function () {
             ],
             'fal_links' => [
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.fal_links',
-                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
+                'config' => ExtensionManagementUtility::getFileFieldTCAConfig(
                     'fal_links',
                     [
                         'appearance' => [
@@ -298,39 +281,39 @@ return (function () {
                         'behaviour' => [
                             'allowLanguageSynchronization' => true,
                         ],
-                        'foreign_types' => [
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_UNKNOWN => [
+                        'maxitems' => 99,
+                        'overrideChildTca' => ['types' => [
+                            File::FILETYPE_UNKNOWN => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
+                            File::FILETYPE_TEXT => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                            File::FILETYPE_IMAGE => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
+                            File::FILETYPE_AUDIO => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.audioOverlayPalette;audioOverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
+                            File::FILETYPE_VIDEO => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.videoOverlayPalette;videoOverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
+                            File::FILETYPE_APPLICATION => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                        ],
-                        'maxitems' => 99,
+                        ]],
                     ]
                 ),
             ],
@@ -360,7 +343,6 @@ return (function () {
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.parent',
                 'config' => [
                     'type' => 'group',
-                    'internal_type' => 'db',
                     'allowed' => 'tx_pxaproductmanager_domain_model_product',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_product',
                     'size' => 1,
@@ -417,7 +399,7 @@ return (function () {
             ],
             'assets' => [
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.assets',
-                'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
+                'config' => ExtensionManagementUtility::getFileFieldTCAConfig(
                     'assets',
                     [
                         'appearance' => [
@@ -427,38 +409,38 @@ return (function () {
                         'behaviour' => [
                             'allowLanguageSynchronization' => true,
                         ],
-                        'foreign_types' => [
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_UNKNOWN => [
+                        'overrideChildTca' => ['types' => [
+                            File::FILETYPE_UNKNOWN => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => [
+                            File::FILETYPE_TEXT => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                            File::FILETYPE_IMAGE => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => [
+                            File::FILETYPE_AUDIO => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.audioOverlayPalette;audioOverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => [
+                            File::FILETYPE_VIDEO => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.videoOverlayPalette;videoOverlayPalette,
                             --palette--;;filePalette',
                             ],
-                            \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => [
+                            File::FILETYPE_APPLICATION => [
                                 'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                             ],
-                        ],
+                        ]],
                     ],
                 ),
             ],
@@ -490,7 +472,7 @@ return (function () {
                     'type' => 'select',
                     'renderType' => 'selectSingle',
                     'items' => [
-                        ['', 0],
+                        ['label' => '', 'value' => 0],
                     ],
                     'default' => 0,
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_producttype',
@@ -524,11 +506,10 @@ return (function () {
                 'label' => $ll . 'tx_pxaproductmanager_domain_model_product.accessories',
                 'config' => [
                     'type' => 'group',
-                    'internal_type' => 'db',
                     'allowed' => 'tx_pxaproductmanager_domain_model_product',
                     'foreign_table' => 'tx_pxaproductmanager_domain_model_product',
                     'suggestOptions' => [
-                        'tx_pxaproductmanager_domain_model_product' => \Pixelant\PxaProductManager\Utility\TcaUtility::getRelatedProductsForeignTableWherePid() .
+                        'tx_pxaproductmanager_domain_model_product' => TcaUtility::getRelatedProductsForeignTableWherePid() .
                             ' AND tx_pxaproductmanager_domain_model_product.uid != ###THIS_UID###' .
                             ' ORDER BY tx_pxaproductmanager_domain_model_product.name',
                     ],
@@ -550,18 +531,14 @@ return (function () {
             'crdate' => [
                 'label' => 'crdate',
                 'config' => [
-                    'type' => 'input',
-                    'renderType' => 'inputDateTime',
-                    'eval' => 'datetime,int',
+                    'type' => 'datetime',
                     'readOnly' => true,
                 ],
             ],
             'tstamp' => [
                 'label' => 'tstamp',
                 'config' => [
-                    'type' => 'input',
-                    'renderType' => 'inputDateTime',
-                    'eval' => 'datetime,int',
+                    'type' => 'datetime',
                     'readOnly' => true,
                 ],
             ],

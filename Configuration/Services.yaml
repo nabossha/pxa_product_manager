@@ -6,6 +6,11 @@ services:
 
   Pixelant\PxaProductManager\:
     resource: '../Classes/*'
+    exclude:
+      - '../Classes/Service/LinkBuilders/*'
+
+  Pixelant\PxaProductManager\Attributes\ValueUpdater\UpdaterInterface:
+    class: Pixelant\PxaProductManager\Attributes\ValueUpdater\ValueUpdaterService
 
   Pixelant\PxaProductManager\Command\UpdateInheritanceCommand:
     tags:
@@ -76,9 +81,15 @@ services:
         before: ''
         event: Pixelant\PxaProductManager\Event\DataInheritance\InlineIdentifierFieldEvent
 
-  Pixelant\PxaProductManager\UserFunction\Solr\AbstractValue:
-    public: true
-  Pixelant\PxaProductManager\UserFunction\Solr\AttributeMultiValue:
-    public: true
-  Pixelant\PxaProductManager\UserFunction\Solr\AttributeValue:
-    public: true
+
+  Pixelant\PxaProductManager\EventListener\CacheWarmupEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'pxa-product-manager-cache-warmup'
+        event: TYPO3\CMS\Core\Cache\Event\CacheWarmupEvent
+
+  Pixelant\PxaProductManager\EventListener\BootCompletedEventListener:
+    tags:
+      - name: event.listener
+        identifier: 'pxa-product-manager-boot-completed'
+        event: TYPO3\CMS\Core\Core\Event\BootCompletedEvent

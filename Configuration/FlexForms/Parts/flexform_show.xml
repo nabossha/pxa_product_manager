@@ -2,17 +2,12 @@
     <sheets>
         <singleView>
             <ROOT>
-                <TCEforms>
-                    <sheetTitle>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.single_view_title</sheetTitle>
-                </TCEforms>
+                <sheetTitle>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.single_view_title</sheetTitle>
                 <type>array</type>
                 <el>
                     <settings.pids.listViewPid>
-                        <TCEforms>
-                            <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.pids.list_view_pid</label>
-                            <config>
+                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.pids.list_view_pid</label><config>
                                 <type>group</type>
-                                <internal_type>db</internal_type>
                                 <allowed>pages</allowed>
                                 <size>1</size>
                                 <maxitems>1</maxitems>
@@ -24,18 +19,13 @@
                                     </suggest>
                                 </wizards>
                             </config>
-                        </TCEforms>
                     </settings.pids.listViewPid>
-
                     <settings.singleView.showLatestVisitedProducts>
-                        <TCEforms>
-                            <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.single_view.show_latest_visited_products</label>
-                            <config>
+                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.single_view.show_latest_visited_products</label><config>
                                 <type>check</type>
                                 <default>0</default>
                                 <renderType>checkboxToggle</renderType>
                             </config>
-                        </TCEforms>
                     </settings.singleView.showLatestVisitedProducts>
                 </el>
             </ROOT>

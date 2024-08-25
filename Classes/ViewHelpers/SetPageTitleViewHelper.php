@@ -24,7 +24,7 @@ namespace Pixelant\PxaProductManager\ViewHelpers;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use Closure;
 use Pixelant\PxaProductManager\Seo\PageTitle\ProductPageTitleProvider;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
@@ -50,13 +50,13 @@ class SetPageTitleViewHelper extends AbstractViewHelper
      * Replace page title.
      *
      * @param array $arguments
-     * @param \Closure $renderChildrenClosure
+     * @param Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return mixed|void
      */
     public static function renderStatic(
         array $arguments,
-        \Closure $renderChildrenClosure,
+        Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ) {
         $title = empty($arguments['title']) ? $renderChildrenClosure() : $arguments['title'];

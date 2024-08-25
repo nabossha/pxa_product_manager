@@ -64,12 +64,12 @@ class AttributeValue extends AbstractEntity
     protected bool $mapped = false;
 
     /**
-     * @var \Pixelant\PxaProductManager\Domain\Model\Product|null
+     * @var Product|null
      */
     protected $product;
 
     /**
-     * @var \Pixelant\PxaProductManager\Domain\Model\Attribute|null
+     * @var Attribute|null
      */
     protected $attribute;
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use TYPO3\CMS\Frontend\DataProcessing\MenuProcessor;
 use Pixelant\PxaProductManager\Configuration\Site\SettingsReader;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use Pixelant\PxaProductManager\Domain\Model\DTO\CategoryDemand;
@@ -16,7 +17,6 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
-use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 abstract class AbstractController extends ActionController
@@ -45,7 +45,7 @@ abstract class AbstractController extends ActionController
      * Override plugin settings with site settings, before resolving view.
      * @return ViewInterface
      */
-    protected function resolveView()
+    protected function resolveView(): \TYPO3Fluid\Fluid\View\ViewInterface
     {
         $singleViewPid = $this->siteSettings->getValue('singleViewPid');
         if ($singleViewPid) {
@@ -55,13 +55,6 @@ abstract class AbstractController extends ActionController
         return parent::resolveView();
     }
 
-    /**
-     * @param Dispatcher $dispatcher
-     */
-    public function injectDispatcher(Dispatcher $dispatcher): void
-    {
-        $this->dispatcher = $dispatcher;
-    }
 
     /**
      * Find records using repository by uids list.
@@ -76,7 +69,7 @@ abstract class AbstractController extends ActionController
         $uids = GeneralUtility::intExplode(',', $uidsList, true);
         if (!empty($uids)) {
             $uids = $repository->overlayUidList($uids);
-            $records = $repository->findByUids($uids)->toArray();
+            $records = $repository->findBy(['uids' => $uids])->toArray();
 
             return $this->collection($records)->sortByOrderList($uids, 'uid')->toArray();
         }
@@ -295,7 +288,7 @@ abstract class AbstractController extends ActionController
     protected function getMenuOfSubpages(int $pageId, int $levels): array
     {
         $menuDirectoryProcessor = GeneralUtility::makeInstance(
-            \TYPO3\CMS\Frontend\DataProcessing\MenuProcessor::class
+            MenuProcessor::class
         );
 
         $excludeUidList = $this->settings['listView']['excludeUidList'] ?? '';
@@ -327,7 +320,7 @@ abstract class AbstractController extends ActionController
     protected function getMenuOfCurrentPage(int $pageId): array
     {
         $menuListProcessor = GeneralUtility::makeInstance(
-            \TYPO3\CMS\Frontend\DataProcessing\MenuProcessor::class
+            MenuProcessor::class
         );
 
         return $menuListProcessor->process(

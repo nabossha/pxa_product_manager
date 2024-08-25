@@ -24,7 +24,9 @@ namespace Pixelant\PxaProductManager\LinkHandler;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use TYPO3\CMS\Backend\LinkHandler\LinkHandlerInterface;
+use TYPO3\CMS\Backend\Tree\View\LinkParameterProviderInterface;
+use PDO;
 use Pixelant\PxaProductManager\Backend\Tree\BrowserTreeView;
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Backend\RecordList\ElementBrowserRecordList;
@@ -39,14 +41,11 @@ use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Type\Bitmask\Permission;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\MathUtility;
-use TYPO3\CMS\Recordlist\LinkHandler\AbstractLinkHandler as Typo3LinkHandler;
-use TYPO3\CMS\Recordlist\LinkHandler\LinkHandlerInterface;
-use TYPO3\CMS\Recordlist\Tree\View\LinkParameterProviderInterface;
 
 /**
  * Link handler for page (and content) links.
  */
-abstract class AbstractLinkHandler extends Typo3LinkHandler implements
+abstract class AbstractLinkHandler extends \TYPO3\CMS\Backend\LinkHandler\AbstractLinkHandler implements
     LinkHandlerInterface,
     LinkParameterProviderInterface
 {
@@ -222,14 +221,10 @@ abstract class AbstractLinkHandler extends Typo3LinkHandler implements
 
         $record = $queryBuilder
             ->select('*')
-            ->from($this->tableName())
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'uid',
-                    $queryBuilder->createNamedParameter($this->linkParts['url'][$this->linkName()], \PDO::PARAM_INT)
-                )
-            )
-            ->execute()
+            ->from($this->tableName())->where($queryBuilder->expr()->eq(
+            'uid',
+            $queryBuilder->createNamedParameter($this->linkParts['url'][$this->linkName()], PDO::PARAM_INT)
+        ))->executeQuery()
             ->fetch();
 
         if ($record) {

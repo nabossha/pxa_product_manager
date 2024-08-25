@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Seo\XmlSitemap;
 
+use TYPO3\CMS\Core\Database\Connection;
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Service\Url\UrlBuilderServiceInterface;
@@ -128,7 +130,7 @@ final class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvide
     {
         /** @var Product $product */
         $product = $this->dataMapper->map(
-            \Pixelant\PxaProductManager\Domain\Model\Product::class,
+            Product::class,
             [$data['data']]
         )[0];
 
@@ -195,7 +197,7 @@ final class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvide
                     'pid',
                     $queryBuilder->createNamedParameter(
                         $pids,
-                        \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY
+                        Connection::PARAM_INT_ARRAY
                     )
                 )
             );
@@ -217,7 +219,7 @@ final class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvide
                         'product_type',
                         $queryBuilder->createNamedParameter(
                             $excludedProductTypes,
-                            \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY
+                            Connection::PARAM_INT_ARRAY
                         )
                     )
                 );
@@ -241,7 +243,7 @@ final class ProductsXmlSitemapDataProvider extends AbstractXmlSitemapDataProvide
 
     /**
      * @return int
-     * @throws \TYPO3\CMS\Core\Context\Exception\AspectNotFoundException
+     * @throws AspectNotFoundException
      */
     protected function getLanguageId(): int
     {

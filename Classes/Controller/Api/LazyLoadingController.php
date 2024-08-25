@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller\Api;
 
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Model\DTO\ProductDemand;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Service\Resource\ResourceConverter;
@@ -41,7 +42,7 @@ class LazyLoadingController extends AbstractBaseLazyLoadingController
      *
      * @param ProductDemand $demand
      */
-    public function listAction(ProductDemand $demand): void
+    public function listAction(ProductDemand $demand): ResponseInterface
     {
         $demand->setOrderByAllowed($this->settings['demand']['orderByAllowed'] ?? '');
         $products = $this->productRepository->findDemanded($demand);
@@ -52,5 +53,6 @@ class LazyLoadingController extends AbstractBaseLazyLoadingController
 
         $this->view->setVariablesToRender(['response']);
         $this->view->assign('response', $response);
+        return $this->htmlResponse();
     }
 }

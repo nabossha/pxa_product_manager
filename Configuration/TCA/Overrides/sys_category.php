@@ -1,6 +1,10 @@
 <?php
 
-defined('TYPO3_MODE') || die;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Resource\File;
+use Pixelant\PxaProductManager\UserFunction\TCA\CategoryUserFunction;
+use Pixelant\PxaProductManager\Utility\TcaUtility;
+defined('TYPO3') || die;
 
 (function (): void {
     $ll = 'LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_db.xlf:';
@@ -58,7 +62,7 @@ defined('TYPO3_MODE') || die;
         'pxapm_image' => [
             'exclude' => true,
             'label' => $ll . 'sys_category.pxapm_image',
-            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
+            'config' => ExtensionManagementUtility::getFileFieldTCAConfig(
                 'pxapm_image',
                 [
                     'appearance' => [
@@ -68,12 +72,12 @@ defined('TYPO3_MODE') || die;
                         'allowLanguageSynchronization' => true,
                     ],
                     'foreign_types' => [
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_UNKNOWN => [
+                        File::FILETYPE_UNKNOWN => [
                             'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                         ],
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                        File::FILETYPE_IMAGE => [
                             'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette',
@@ -141,7 +145,7 @@ defined('TYPO3_MODE') || die;
         'pxapm_banner_image' => [
             'exclude' => 1,
             'label' => $ll . 'sys_category.pxapm_banner_image',
-            'config' => \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig(
+            'config' => ExtensionManagementUtility::getFileFieldTCAConfig(
                 'pxapm_banner_image',
                 [
                     'appearance' => [
@@ -151,12 +155,12 @@ defined('TYPO3_MODE') || die;
                         'allowLanguageSynchronization' => true,
                     ],
                     'foreign_types' => [
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_UNKNOWN => [
+                        File::FILETYPE_UNKNOWN => [
                             'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.basicoverlayPalette;basicoverlayPalette,
                             --palette--;;filePalette',
                         ],
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => [
+                        File::FILETYPE_IMAGE => [
                             'showitem' => '
                             --palette--;LLL:EXT:core/Resources/Private/Language/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
                             --palette--;;filePalette',
@@ -171,14 +175,14 @@ defined('TYPO3_MODE') || die;
             'exclude' => 0,
             'label' => $ll . 'sys_category.pxapm_tax_rate',
             'config' => [
-                'type' => 'input',
+                'type' => 'number',
                 'size' => 5,
                 'range' => [
                     'lower' => 0,
                     'upper' => 100,
                 ],
-                'eval' => 'double2',
                 'default' => 0.00,
+                'format' => 'decimal',
             ],
         ],
         'pxapm_content_page' => [
@@ -187,7 +191,6 @@ defined('TYPO3_MODE') || die;
             'label' => $ll . 'sys_category.pxapm_content_page',
             'config' => [
                 'type' => 'group',
-                'internal_type' => 'db',
                 'allowed' => 'pages',
                 'foreign_table' => 'pages',
                 'default' => 0,
@@ -201,7 +204,7 @@ defined('TYPO3_MODE') || die;
             'label' => $ll . 'sys_category.pxapm_content_page_link',
             'config' => [
                 'type' => 'user',
-                'userFunc' => \Pixelant\PxaProductManager\UserFunction\TCA\CategoryUserFunction::class . '->pageModuleLinkField',
+                'userFunc' => CategoryUserFunction::class . '->pageModuleLinkField',
             ],
         ],
         'pxapm_content_colpos' => [
@@ -222,8 +225,7 @@ defined('TYPO3_MODE') || die;
                 'renderType' => 'checkboxToggle',
                 'items' => [
                     [
-                        0 => '',
-                        1 => '',
+                        'label' => '',
                         'invertStateDisplay' => true,
                     ],
                 ],
@@ -240,8 +242,7 @@ defined('TYPO3_MODE') || die;
                 'renderType' => 'checkboxToggle',
                 'items' => [
                     [
-                        0 => '',
-                        1 => '',
+                        'label' => '',
                         'invertStateDisplay' => true,
                     ],
                 ],
@@ -258,8 +259,7 @@ defined('TYPO3_MODE') || die;
                 'renderType' => 'checkboxToggle',
                 'items' => [
                     [
-                        0 => '',
-                        1 => '',
+                        'label' => '',
                         'invertStateDisplay' => true,
                     ],
                 ],
@@ -269,14 +269,14 @@ defined('TYPO3_MODE') || die;
             ],
         ],
     ];
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns('sys_category', $tempColumns);
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerAssets', 'pxapm_image, --linebreak--, pxapm_banner_image');
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerNavigation', 'pxapm_hidden_in_navigation, pxapm_hide_products, pxapm_hide_subcategories');
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerContent', 'pxapm_content_page, --linebreak--, pxapm_content_colpos, pxapm_content_page_link');
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerSeo', 'pxapm_alternative_title, --linebreak--, pxapm_meta_description, pxapm_keywords');
+    ExtensionManagementUtility::addTCAcolumns('sys_category', $tempColumns);
+    ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerAssets', 'pxapm_image, --linebreak--, pxapm_banner_image');
+    ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerNavigation', 'pxapm_hidden_in_navigation, pxapm_hide_products, pxapm_hide_subcategories');
+    ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerContent', 'pxapm_content_page, --linebreak--, pxapm_content_colpos, pxapm_content_page_link');
+    ExtensionManagementUtility::addFieldsToPalette('sys_category', 'pxaProductManagerSeo', 'pxapm_alternative_title, --linebreak--, pxapm_meta_description, pxapm_keywords');
 
     // Additional fields
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+    ExtensionManagementUtility::addToAllTCAtypes(
         'sys_category',
         '--div--;' . $ll . 'sys_category.additional_fields_tab, --palette--;' . $ll . 'sys_category.palette.navigation;pxaProductManagerNavigation,
          --palette--;' . $ll . 'sys_category.palette.assets;pxaProductManagerAssets, pxapm_tax_rate, pxapm_description,
@@ -288,13 +288,13 @@ defined('TYPO3_MODE') || die;
     );
 
     // Slug
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addToAllTCAtypes(
+    ExtensionManagementUtility::addToAllTCAtypes(
         'sys_category',
         'pxapm_slug',
         '',
         'after:title'
     );
-    $categoryWhere = \Pixelant\PxaProductManager\Utility\TcaUtility::getCategoriesTCAWhereClause();
+    $categoryWhere = TcaUtility::getCategoriesTCAWhereClause();
     if (!empty($categoryWhere)) {
         $config = &$GLOBALS['TCA']['sys_category']['columns']['parent']['config'];
         $config['foreign_table_where'] = $categoryWhere . ' ' . $config['foreign_table_where'];

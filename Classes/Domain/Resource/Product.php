@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Domain\Resource;
 
+use TYPO3\CMS\Extbase\Reflection\Exception\PropertyNotAccessibleException;
 use Pixelant\PxaProductManager\Configuration\Site\SettingsReader;
 use Pixelant\PxaProductManager\Service\Url\UrlBuilderServiceInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -178,7 +179,7 @@ class Product extends AbstractResource
      *
      * @param array $additionalFields
      * @return array
-     * @throws \TYPO3\CMS\Extbase\Reflection\Exception\PropertyNotAccessibleException
+     * @throws PropertyNotAccessibleException
      */
     protected function getAdditionalFieldsValues(array $additionalFields): array
     {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\UserFunction\Solr;
 
+use InvalidArgumentException;
 use Pixelant\PxaProductManager\Domain\Model\Option;
 
 class AttributeMultiValue extends AbstractValue
@@ -14,7 +15,7 @@ class AttributeMultiValue extends AbstractValue
      * @param string $content
      * @param array $params
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function value(string $content, array $params): string
     {

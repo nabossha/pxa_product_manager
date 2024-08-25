@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
+use Pixelant\PxaProductManager\Domain\Model\Page;
+use Pixelant\PxaProductManager\Domain\Model\Image;
+use Pixelant\PxaProductManager\Domain\Model\AttributeFile;
+use Pixelant\PxaProductManager\Domain\Model\Category;
+
 return [
-    \Pixelant\PxaProductManager\Domain\Model\Page::class => [
+    Page::class => [
         'tableName' => 'pages',
     ],
-    \Pixelant\PxaProductManager\Domain\Model\Image::class => [
+    Image::class => [
         'tableName' => 'sys_file_reference',
         'properties' => [
             'type' => [
@@ -14,7 +19,7 @@ return [
             ],
         ],
     ],
-    \Pixelant\PxaProductManager\Domain\Model\AttributeFile::class => [
+    AttributeFile::class => [
         'tableName' => 'sys_file_reference',
         'properties' => [
             'attribute' => [
@@ -22,7 +27,7 @@ return [
             ],
         ],
     ],
-    \Pixelant\PxaProductManager\Domain\Model\Category::class => [
+    Category::class => [
         'tableName' => 'sys_category',
         'properties' => [
             'products' => [

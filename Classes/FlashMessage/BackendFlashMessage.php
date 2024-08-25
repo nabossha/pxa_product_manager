@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\FlashMessage;
 
+use TYPO3\CMS\Core\Exception;
+use TYPO3\CMS\Core\Messaging\AbstractMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -16,9 +18,9 @@ class BackendFlashMessage
      * @param string $message
      * @param string $title
      * @param int $level
-     * @throws \TYPO3\CMS\Core\Exception
+     * @throws Exception
      */
-    public function flash(string $message, string $title, int $level = FlashMessage::INFO): void
+    public function flash(string $message, string $title, int $level = AbstractMessage::INFO): void
     {
         /** @var FlashMessage $flashMessage */
         $flashMessage = GeneralUtility::makeInstance(

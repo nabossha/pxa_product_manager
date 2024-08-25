@@ -25,7 +25,7 @@ class ResourceConverterTest extends UnitTestCase
      */
     public function translateEntityNameToResourceNameReturnCorrectResourceName(): void
     {
-        $expect = 'Pixelant\PxaProductManager\Domain\Resource\Product';
+        $expect = \Pixelant\PxaProductManager\Domain\Resource\Product::class;
 
         self::assertEquals(
             $expect,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
 use Pixelant\PxaProductManager\Service\NavigationService;
 
@@ -28,9 +29,10 @@ class CategoryController extends AbstractController
     /**
      * List navigation.
      */
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         $this->view->assign('items', $this->getNavigationService()->getItems());
+        return $this->htmlResponse();
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\ViewHelpers;
 
+use Closure;
 use Pixelant\PxaProductManager\Domain\Resource\ResourceInterface;
 use Pixelant\PxaProductManager\Service\Resource\ResourceConverter;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -33,13 +34,13 @@ class ResourceEncodeViewHelper extends AbstractViewHelper
 
     /**
      * @param array $arguments
-     * @param \Closure $renderChildrenClosure
+     * @param Closure $renderChildrenClosure
      * @param RenderingContextInterface $renderingContext
      * @return mixed
      */
     public static function renderStatic(
         array $arguments,
-        \Closure $renderChildrenClosure,
+        Closure $renderChildrenClosure,
         RenderingContextInterface $renderingContext
     ): string {
         /** @var AbstractEntity $entity */

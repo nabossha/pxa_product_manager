@@ -1,26 +1,27 @@
 <?php
 
-defined('TYPO3_MODE') || die;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+defined('TYPO3') || die;
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+ExtensionManagementUtility::addStaticFile(
     'pxa_product_manager',
     'Configuration/TypoScript',
     'Products Manager'
 );
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+ExtensionManagementUtility::addStaticFile(
     'pxa_product_manager',
     'Configuration/TypoScript/Solr',
     'Products Manager: Solr Configuration'
 );
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+ExtensionManagementUtility::addStaticFile(
     'pxa_product_manager',
     'Configuration/TypoScript/Sitemap',
     'Products Manager: Xml Sitemap'
 );
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+ExtensionManagementUtility::addStaticFile(
     'pxa_product_manager',
     'Configuration/TypoScript/Swiper',
     'Products Manager: Add Swiper Js and Styles'

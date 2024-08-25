@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Attributes\ValueUpdater;
 
+use DateTime;
+use Exception;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeRepository;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeValueRepository;
@@ -72,9 +74,9 @@ class ValueUpdaterService implements UpdaterInterface
         }
         if ($attribute->isDateType() && !empty($value)) {
             try {
-                $dt = new \DateTime($value);
+                $dt = new DateTime($value);
                 $value = $dt->getTimestamp();
-            } catch (\Exception $exception) {
+            } catch (Exception $exception) {
                 $value = '';
             }
         }

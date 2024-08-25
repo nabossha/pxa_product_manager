@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Utility;
 
+use Doctrine\DBAL\Driver\Exception;
+use PDO;
 use Pixelant\PxaProductManager\Attributes\ValueMapper\FalMapper;
 use Pixelant\PxaProductManager\Attributes\ValueMapper\SelectBoxMapper;
 use Pixelant\PxaProductManager\Domain\Model\Attribute;
@@ -47,7 +49,7 @@ class AttributeUtility
      * @param int $productId
      * @param string $selectFields
      * @return array
-     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws Exception
      */
     public static function findAttributesForProduct(
         int $productId,
@@ -112,9 +114,7 @@ class AttributeUtility
         }
 
         $row = $queryBuilder
-            ->select(...GeneralUtility::trimExplode(',', $selectFields, true))
-            ->from(AttributeRepository::TABLE_NAME)
-            ->execute()
+            ->select(...GeneralUtility::trimExplode(',', $selectFields, true))->from(AttributeRepository::TABLE_NAME)->executeQuery()
             ->fetchAllAssociative();
 
         if (is_array($row)) {
@@ -223,7 +223,7 @@ class AttributeUtility
      * @param array $attributeIds
      * @param string $selectFields
      * @return array|null
-     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws Exception
      */
     public static function findAttributeValues(int $productId, array $attributeIds, string $selectFields = '*'): ?array
     {
@@ -238,12 +238,7 @@ class AttributeUtility
                 AttributeValueRepository::TABLE_NAME,
                 'av',
                 $queryBuilder->expr()->eq('av.attribute', AttributeRepository::TABLE_NAME . '.uid')
-            )
-            ->where(
-                $queryBuilder->expr()->eq('product', $queryBuilder->createNamedParameter($productId)),
-                $queryBuilder->expr()->in('attribute', $attributeIds)
-            )
-            ->execute()
+            )->where($queryBuilder->expr()->eq('product', $queryBuilder->createNamedParameter($productId)), $queryBuilder->expr()->in('attribute', $attributeIds))->executeQuery()
             ->fetchAllAssociative();
 
         if (is_array($attributeValues)) {
@@ -260,7 +255,7 @@ class AttributeUtility
      * @param int $attributeId
      * @param string $selectFields
      * @return array|null
-     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws Exception
      */
     public static function findAttributeValue(int $productId, int $attributeId, string $selectFields = '*'): ?array
     {
@@ -281,11 +276,7 @@ class AttributeUtility
 
         $attributeValue = $queryBuilder
             ->select('*')
-            ->from(AttributeValueRepository::TABLE_NAME)
-            ->where(
-                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid))
-            )
-            ->execute()
+            ->from(AttributeValueRepository::TABLE_NAME)->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid)))->executeQuery()
             ->fetchAssociative();
 
         $attribute = self::findAttribute($attributeValue['attribute']);
@@ -320,11 +311,7 @@ class AttributeUtility
 
         $row = $queryBuilder
             ->select(...GeneralUtility::trimExplode(',', $selectFields, true))
-            ->from(OptionRepository::TABLE_NAME)
-            ->where(
-                $queryBuilder->expr()->eq('attribute', $queryBuilder->createNamedParameter($attributeId))
-            )
-            ->execute()
+            ->from(OptionRepository::TABLE_NAME)->where($queryBuilder->expr()->eq('attribute', $queryBuilder->createNamedParameter($attributeId)))->executeQuery()
             ->fetchAllAssociative();
 
         if (is_array($row)) {
@@ -347,14 +334,10 @@ class AttributeUtility
             ->getQueryBuilderForTable(AttributeValueRepository::TABLE_NAME);
 
         $queryBuilder
-            ->delete(AttributeValueRepository::TABLE_NAME)
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'uid',
-                    $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)
-                )
-            )
-            ->execute();
+            ->delete(AttributeValueRepository::TABLE_NAME)->where($queryBuilder->expr()->eq(
+            'uid',
+            $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)
+        ))->executeStatement();
     }
 
     /**

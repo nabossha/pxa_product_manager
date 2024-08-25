@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Command;
 
+use PDO;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeValueRepository;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Domain\Repository\RelationInheritanceIndexRepository;
@@ -133,36 +134,30 @@ class UpdateRelationInheritanceIndexCommand extends Command
                 'tpdmp',
                 self::ATTRIBUTEVALUE_TABLE,
                 'tpdmaparent',
-                (string)$queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq(
-                        'tpdmaparent.product',
-                        $queryBuilder->quoteIdentifier('tpdmp.parent')
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'tpdmaparent.attribute',
-                        $queryBuilder->quoteIdentifier('tpdma.attribute')
-                    )
-                )
+                (string)$queryBuilder->expr()->and($queryBuilder->expr()->eq(
+                    'tpdmaparent.product',
+                    $queryBuilder->quoteIdentifier('tpdmp.parent')
+                ), $queryBuilder->expr()->eq(
+                    'tpdmaparent.attribute',
+                    $queryBuilder->quoteIdentifier('tpdma.attribute')
+                ))
             )
             ->leftJoin(
                 'tpdma',
                 self::RELATION_INDEX_TABLE,
                 'tprii',
-                (string)$queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq(
-                        'tprii.uid_child',
-                        $queryBuilder->quoteIdentifier('tpdma.uid')
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'tprii.uid_parent',
-                        $queryBuilder->quoteIdentifier('tpdmaparent.uid')
-                    )
-                )
+                (string)$queryBuilder->expr()->and($queryBuilder->expr()->eq(
+                    'tprii.uid_child',
+                    $queryBuilder->quoteIdentifier('tpdma.uid')
+                ), $queryBuilder->expr()->eq(
+                    'tprii.uid_parent',
+                    $queryBuilder->quoteIdentifier('tpdmaparent.uid')
+                ))
             )
             ->where(
                 $queryBuilder->expr()->gt(
                     'tpdmp.parent',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
                 ),
                 $queryBuilder->expr()->isNotNull(
                     'tpdma.uid'
@@ -173,13 +168,7 @@ class UpdateRelationInheritanceIndexCommand extends Command
                 $queryBuilder->expr()->isNull(
                     'tprii.uid_child'
                 )
-            )
-            ->groupBy(
-                'tpdmp.uid',
-                'tpdma.uid',
-                'tpdmaparent.uid'
-            )
-            ->execute()
+            )->groupBy('tpdmp.uid', 'tpdma.uid', 'tpdmaparent.uid')->executeQuery()
             ->fetchAllAssociative();
 
         return $records;

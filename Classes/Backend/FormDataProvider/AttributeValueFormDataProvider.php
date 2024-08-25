@@ -51,6 +51,13 @@ class AttributeValueFormDataProvider implements FormDataProviderInterface
         if ($result['tableName'] !== AttributeValueRepository::TABLE_NAME) {
             return $result;
         }
+        // Modify the type field in TCA for form-rendering (label)
+       // $GLOBALS['TCA'][AttributeValueRepository::TABLE_NAME]['ctrl']['type'] = 'attribute:type';
+        // Modify the type field in databaseRow
+        if (isset($result['databaseRow']['attribute:type'])) {
+            $result['databaseRow']['type'] = $result['databaseRow']['attribute:type'];
+        }
+        //debug($result['processedTca']['ctrl']['type']);
 
         $this->addCss();
 

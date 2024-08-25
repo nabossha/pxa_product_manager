@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Hook;
 
+use TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException;
+use PDO;
 use TYPO3\CMS\Backend\Controller\PageLayoutController;
 use TYPO3\CMS\Backend\Routing\UriBuilder;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -63,7 +65,7 @@ class PageHookRelatedCategories
      *
      * @param int $categoryUid
      * @return string
-     * @throws \TYPO3\CMS\Backend\Routing\Exception\RouteNotFoundException
+     * @throws RouteNotFoundException
      */
     protected function editUri(int $categoryUid): string
     {
@@ -73,7 +75,7 @@ class PageHookRelatedCategories
         return (string)$uriBuilder->buildUriFromRoute(
             'record_edit',
             [
-                "edit[sys_category][${categoryUid}]" => 'edit',
+                "edit[sys_category][{$categoryUid}]" => 'edit',
                 'returnUrl' => GeneralUtility::getIndpEnv('REQUEST_URI'),
             ],
             UriBuilder::ABSOLUTE_URL
@@ -96,14 +98,10 @@ class PageHookRelatedCategories
 
         return $queryBuilder
             ->select('uid', 'title')
-            ->from('sys_category')
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'pxapm_content_page',
-                    $queryBuilder->createNamedParameter($page, \PDO::PARAM_INT)
-                )
-            )
-            ->execute()
+            ->from('sys_category')->where($queryBuilder->expr()->eq(
+            'pxapm_content_page',
+            $queryBuilder->createNamedParameter($page, PDO::PARAM_INT)
+        ))->executeQuery()
             ->fetchAll();
     }
 }

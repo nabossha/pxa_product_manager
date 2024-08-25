@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Configuration\Flexform;
 
+use RuntimeException;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
@@ -84,13 +85,13 @@ class StructureLoader
      * @param array $dataStructure
      * @param string $flexformPath
      * @return array
-     * @throws \RuntimeException
+     * @throws RuntimeException
      */
     protected function updateDataStructureWithFlexform(array $dataStructure, string $flexformPath): array
     {
         $fullPath = GeneralUtility::getFileAbsFileName($flexformPath);
         if (!file_exists($fullPath)) {
-            throw new \RuntimeException(
+            throw new RuntimeException(
                 'Could not find flexform with path "' . $fullPath . '" (given path "' . $flexformPath . '")',
                 1570185225935
             );

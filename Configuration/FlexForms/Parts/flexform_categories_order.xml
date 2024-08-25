@@ -2,49 +2,40 @@
     <sheets>
         <categoriesOrderings>
             <ROOT>
-                <TCEforms>
-                    <sheetTitle>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.categories_orderings</sheetTitle>
-                </TCEforms>
+                <sheetTitle>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.categories_orderings</sheetTitle>
                 <type>array</type>
                 <el>
                     <settings.categoriesOrderings.orderBy>
-                        <TCEforms>
-                            <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.categories_orderings.order_by</label>
-                            <config>
+                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.categories_orderings.order_by</label><config>
                                 <type>select</type>
                                 <renderType>selectSingle</renderType>
                                 <items type="array">
                                     <numIndex index="0" type="array">
-                                        <numIndex index="0">LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sortby_sorting</numIndex>
-                                        <numIndex index="1">sorting</numIndex>
+                                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sortby_sorting</label>
+                                        <value>sorting</value>
                                     </numIndex>
                                     <numIndex index="1" type="array">
-                                        <numIndex index="0">LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sortby_title</numIndex>
-                                        <numIndex index="1">title</numIndex>
+                                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sortby_title</label>
+                                        <value>title</value>
                                     </numIndex>
                                 </items>
                             </config>
-                        </TCEforms>
                     </settings.categoriesOrderings.orderBy>
-
                     <settings.categoriesOrderings.orderDirection>
-                        <TCEforms>
-                            <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.categories_orderings.order_direction</label>
-                            <config>
+                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.categories_orderings.order_direction</label><config>
                                 <type>select</type>
                                 <renderType>selectSingle</renderType>
                                 <items type="array">
                                     <numIndex index="0" type="array">
-                                        <numIndex index="0">LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sort_direction_asc</numIndex>
-                                        <numIndex index="1">asc</numIndex>
+                                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sort_direction_asc</label>
+                                        <value>asc</value>
                                     </numIndex>
                                     <numIndex index="1" type="array">
-                                        <numIndex index="0">LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sort_direction_desc</numIndex>
-                                        <numIndex index="1">desc</numIndex>
+                                        <label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.sort_direction_desc</label>
+                                        <value>desc</value>
                                     </numIndex>
                                 </items>
                             </config>
-                        </TCEforms>
                     </settings.categoriesOrderings.orderDirection>
                 </el>
             </ROOT>

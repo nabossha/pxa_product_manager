@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller\Api;
 
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Model\DTO\ProductDemand;
 use Pixelant\PxaProductManager\Domain\Model\Filter;
 use Pixelant\PxaProductManager\Service\LazyLoading\ProductsQueryDispatcher;
@@ -28,7 +29,7 @@ class LazyAvailableFiltersController extends AbstractBaseLazyLoadingController
      *
      * @param ProductDemand $demand
      */
-    public function listAction(ProductDemand $demand): void
+    public function listAction(ProductDemand $demand): ResponseInterface
     {
         $this->queryDispatcher->prepareQuery($demand);
 
@@ -41,6 +42,7 @@ class LazyAvailableFiltersController extends AbstractBaseLazyLoadingController
 
         $this->view->setVariablesToRender(['response']);
         $this->view->assign('response', $response);
+        return $this->htmlResponse();
     }
 
     /**

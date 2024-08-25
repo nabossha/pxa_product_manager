@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
 use Pixelant\PxaProductManager\Domain\Repository\FilterRepository;
@@ -59,7 +60,7 @@ class LazyProductController extends AbstractController
      *
      * @return void
      */
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         // Selected filters
         $filters = $this->findRecordsByList($this->settings['filtering']['filters'], $this->filterRepository);
@@ -68,6 +69,7 @@ class LazyProductController extends AbstractController
         $this->view->assign('filters', $filters);
         $this->view->assign('orderBy', json_encode($this->createOrderByArray()));
         $this->view->assign('settingsJson', json_encode($this->lazyListSettings()));
+        return $this->htmlResponse();
     }
 
     /**

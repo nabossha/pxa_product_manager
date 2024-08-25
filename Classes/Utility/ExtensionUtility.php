@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Utility;
 
+use UnexpectedValueException;
 class ExtensionUtility extends \TYPO3\CMS\Extbase\Utility\ExtensionUtility
 {
     /**
@@ -13,7 +14,7 @@ class ExtensionUtility extends \TYPO3\CMS\Extbase\Utility\ExtensionUtility
      * @param string $pluginName
      * @param string $controllerClassName
      * @param array $actions
-     * @throws \UnexpectedValueException
+     * @throws UnexpectedValueException
      */
     public static function addControllerAction(
         string $extensionName,
@@ -29,7 +30,7 @@ class ExtensionUtility extends \TYPO3\CMS\Extbase\Utility\ExtensionUtility
             if (gettype($action) === 'string') {
                 $config['actions'][] = $action;
             } else {
-                throw new \UnexpectedValueException(
+                throw new UnexpectedValueException(
                     'Actions value must be type of string, but type of ' . gettype($action) . ' is given'
                 );
             }

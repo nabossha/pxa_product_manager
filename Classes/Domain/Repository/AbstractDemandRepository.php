@@ -26,7 +26,7 @@ namespace Pixelant\PxaProductManager\Domain\Repository;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  */
-
+use TYPO3\CMS\Core\Database\Connection;
 use Pixelant\Demander\Service\DemandService;
 use Pixelant\PxaProductManager\Domain\Model\DTO\DemandInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -115,7 +115,7 @@ abstract class AbstractDemandRepository extends Repository implements DemandRepo
                     'pid',
                     $queryBuilder->createNamedParameter(
                         $storage,
-                        \TYPO3\CMS\Core\Database\Connection::PARAM_INT_ARRAY
+                        Connection::PARAM_INT_ARRAY
                     )
                 )
             );

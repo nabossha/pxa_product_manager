@@ -1,11 +1,14 @@
 <?php
 
-defined('TYPO3_MODE') || die;
+use Pixelant\PxaProductManager\Domain\Repository\PageRepository;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Core\Utility\ArrayUtility;
+defined('TYPO3') || die;
 
 (function (): void {
-    $pdDokType = \Pixelant\PxaProductManager\Domain\Repository\PageRepository::DOKTYPE_PRODUCT_DISPLAY;
+    $pdDokType = PageRepository::DOKTYPE_PRODUCT_DISPLAY;
     // Add new page type as possible select item:
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItem(
+    ExtensionManagementUtility::addTcaSelectItem(
         'pages',
         'doktype',
         [
@@ -17,7 +20,7 @@ defined('TYPO3_MODE') || die;
         'after'
     );
 
-    \TYPO3\CMS\Core\Utility\ArrayUtility::mergeRecursiveWithOverrule(
+    ArrayUtility::mergeRecursiveWithOverrule(
         $GLOBALS['TCA']['pages'],
         [
             // add icon for new page type:
@@ -37,7 +40,7 @@ defined('TYPO3_MODE') || die;
     );
 
     // BE layouts
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::registerPageTSConfigFile(
+    ExtensionManagementUtility::registerPageTSConfigFile(
         'pxa_product_manager',
         'Configuration/TSconfig/Page/Mod/WebLayout/BackendLayouts.tsconfig',
         'Product Manager BE layouts'

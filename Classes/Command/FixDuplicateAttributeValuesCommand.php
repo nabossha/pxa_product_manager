@@ -17,6 +17,9 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Command;
 
+use PDO;
+use Exception;
+use Throwable;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeRepository;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeValueRepository;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
@@ -195,12 +198,10 @@ class FixDuplicateAttributeValuesCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'deleted',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
                 )
             )
-            ->groupBy('product', 'attribute')
-            ->having('cnt > 1')
-            ->execute()
+            ->groupBy('product', 'attribute')->having('cnt > 1')->executeQuery()
             ->fetchAllAssociative();
 
         return $records;
@@ -225,15 +226,13 @@ class FixDuplicateAttributeValuesCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'product',
-                    $queryBuilder->createNamedParameter($product, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($product, PDO::PARAM_INT)
                 ),
                 $queryBuilder->expr()->eq(
                     'attribute',
-                    $queryBuilder->createNamedParameter($attribute, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($attribute, PDO::PARAM_INT)
                 )
-            )
-            ->orderBy('tstamp', 'DESC')
-            ->execute()
+            )->orderBy('tstamp', 'DESC')->executeQuery()
             ->fetchAllAssociative();
 
         return $records;
@@ -257,11 +256,9 @@ class FixDuplicateAttributeValuesCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($id, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($id, PDO::PARAM_INT)
                 )
-            )
-            ->orderBy('crdate')
-            ->execute()
+            )->orderBy('crdate')->executeQuery()
             ->fetchAllAssociative();
 
         return $records[0] ?? [];
@@ -272,7 +269,7 @@ class FixDuplicateAttributeValuesCommand extends Command
      *
      * @param array $attributeValues
      * @return void
-     * @throws \Exception
+     * @throws Exception
      */
     protected function determineAttributeValueScores(array &$attributeValues): void
     {
@@ -303,7 +300,7 @@ class FixDuplicateAttributeValuesCommand extends Command
             ) ?? [];
 
             if (count($parentAttribute) > 1) {
-                throw new \Exception(
+                throw new Exception(
                     sprintf(
                         'Parent product have duplicate attribute values (product: %s, attribute: %s)',
                         $parentProduct,
@@ -333,7 +330,7 @@ class FixDuplicateAttributeValuesCommand extends Command
                     $parentAttribute
                 );
             }
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $attributeValue['error'] = $th->getMessage();
         }
     }
@@ -349,7 +346,7 @@ class FixDuplicateAttributeValuesCommand extends Command
      * @param bool $allCopiedFromSame
      * @param array $parentAttribute
      * @return int
-     * @throws \Exception
+     * @throws Exception
      */
     protected function determineAttributeValueScore(
         int $index,
@@ -372,7 +369,7 @@ class FixDuplicateAttributeValuesCommand extends Command
             && $allValuesAreSame
             && !empty($parentAttribute)
         ) {
-            throw new \Exception('Could not determine attribute score, no attribute values are correct. (Delete)?', 1);
+            throw new Exception('Could not determine attribute score, no attribute values are correct. (Delete)?', 1);
         }
         // AttributeValue value equals parent attributevalue value, score + 100.
         if ((string)$parentAttribute['value'] === (string)$attributeValue['value'] && !empty($parentAttribute)) {
@@ -440,30 +437,25 @@ class FixDuplicateAttributeValuesCommand extends Command
                 'product_attributevalue',
                 self::RELATION_INDEX_TABLE,
                 'tprii',
-                (string)$queryBuilder->expr()->andX(
-                    $queryBuilder->expr()->eq(
-                        'tprii.uid_child',
-                        $queryBuilder->quoteIdentifier('product_attributevalue.uid')
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'tprii.child_parent_id',
-                        $queryBuilder->quoteIdentifier('product_attributevalue.product')
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'tprii.child_parent_tablename',
-                        $queryBuilder->createNamedParameter(
-                            'tx_pxaproductmanager_domain_model_product',
-                            \PDO::PARAM_STR
-                        )
-                    ),
-                    $queryBuilder->expr()->eq(
-                        'tprii.tablename',
-                        $queryBuilder->createNamedParameter(
-                            'tx_pxaproductmanager_domain_model_attributevalue',
-                            \PDO::PARAM_STR
-                        )
+                (string)$queryBuilder->expr()->and($queryBuilder->expr()->eq(
+                    'tprii.uid_child',
+                    $queryBuilder->quoteIdentifier('product_attributevalue.uid')
+                ), $queryBuilder->expr()->eq(
+                    'tprii.child_parent_id',
+                    $queryBuilder->quoteIdentifier('product_attributevalue.product')
+                ), $queryBuilder->expr()->eq(
+                    'tprii.child_parent_tablename',
+                    $queryBuilder->createNamedParameter(
+                        'tx_pxaproductmanager_domain_model_product',
+                        PDO::PARAM_STR
                     )
-                )
+                ), $queryBuilder->expr()->eq(
+                    'tprii.tablename',
+                    $queryBuilder->createNamedParameter(
+                        'tx_pxaproductmanager_domain_model_attributevalue',
+                        PDO::PARAM_STR
+                    )
+                ))
             )
             ->leftJoin(
                 'tprii',
@@ -477,15 +469,13 @@ class FixDuplicateAttributeValuesCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'product_attributevalue.product',
-                    $queryBuilder->createNamedParameter($product, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($product, PDO::PARAM_INT)
                 ),
                 $queryBuilder->expr()->eq(
                     'product_attributevalue.attribute',
-                    $queryBuilder->createNamedParameter($attribute, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($attribute, PDO::PARAM_INT)
                 )
-            )
-            ->orderBy('product_attributevalue.tstamp', 'DESC')
-            ->execute()
+            )->orderBy('product_attributevalue.tstamp', 'DESC')->executeQuery()
             ->fetchAllAssociative();
 
         return $records;
@@ -508,7 +498,7 @@ class FixDuplicateAttributeValuesCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)
                 )
             )
             ->set('value', $value)
@@ -532,7 +522,7 @@ class FixDuplicateAttributeValuesCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'uid',
-                    $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)
                 )
             )
             ->execute();

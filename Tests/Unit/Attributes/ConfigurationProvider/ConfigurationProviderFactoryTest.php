@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Tests\Unit\Attributes\ConfigurationProvider;
 
+use UnexpectedValueException;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use Pixelant\PxaProductManager\Attributes\ConfigurationProvider\ConfigurationProviderFactory;
 
@@ -14,7 +15,7 @@ class ConfigurationProviderFactoryTest extends UnitTestCase
      */
     public function createThrownExceptionIfTypeOfAttributeIsNotSupported(): void
     {
-        $this->expectException(\UnexpectedValueException::class);
+        $this->expectException(UnexpectedValueException::class);
         ConfigurationProviderFactory::create(
             1,
             [

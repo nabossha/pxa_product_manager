@@ -17,6 +17,8 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Command;
 
+use PDO;
+use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use Pixelant\PxaProductManager\Domain\Repository\InheritanceQueueRepository;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Utility\DataInheritanceUtility;
@@ -150,11 +152,9 @@ class UpdateInheritanceCommand extends Command
             ->where(
                 $queryBuilder->expr()->neq(
                     'parent',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
                 )
-            )
-            ->orderBy('tstamp', 'DESC')
-            ->execute()
+            )->orderBy('tstamp', 'DESC')->executeQuery()
             ->fetchAllAssociative();
 
         return $records ?? [];
@@ -184,25 +184,20 @@ class UpdateInheritanceCommand extends Command
      */
     protected function fetchInheritanceQueueCount(): int
     {
-        /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable(InheritanceQueueRepository::TABLE_NAME);
         $queryBuilder->getRestrictions()->removeAll();
 
         return $queryBuilder
             ->addSelectLiteral('COUNT(*) as cnt')
-            ->from(InheritanceQueueRepository::TABLE_NAME)
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'indexed',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
-                ),
-                $queryBuilder->expr()->eq(
-                    'errors',
-                    $queryBuilder->createNamedParameter('', \PDO::PARAM_STR)
-                )
-            )
-            ->execute()
+            ->from(InheritanceQueueRepository::TABLE_NAME)->where($queryBuilder->expr()->eq(
+            'indexed',
+            $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
+        ), $queryBuilder->expr()->eq(
+            'errors',
+            $queryBuilder->createNamedParameter('', PDO::PARAM_STR)
+        ))->executeQuery()
             ->fetchOne();
     }
 
@@ -213,7 +208,7 @@ class UpdateInheritanceCommand extends Command
      */
     protected function fetchInheritanceQueue(int $limit): array
     {
-        /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable(InheritanceQueueRepository::TABLE_NAME);
         $queryBuilder->getRestrictions()->removeAll();
@@ -224,15 +219,13 @@ class UpdateInheritanceCommand extends Command
             ->where(
                 $queryBuilder->expr()->eq(
                     'indexed',
-                    $queryBuilder->createNamedParameter(0, \PDO::PARAM_INT)
+                    $queryBuilder->createNamedParameter(0, PDO::PARAM_INT)
                 ),
                 $queryBuilder->expr()->eq(
                     'errors',
-                    $queryBuilder->createNamedParameter('', \PDO::PARAM_STR)
+                    $queryBuilder->createNamedParameter('', PDO::PARAM_STR)
                 )
-            )
-            ->setMaxResults($limit)
-            ->execute()
+            )->setMaxResults($limit)->executeQuery()
             ->fetchAllAssociative();
     }
 
@@ -243,13 +236,12 @@ class UpdateInheritanceCommand extends Command
      */
     protected function truncateInheritanceQueue(): void
     {
-        /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable(InheritanceQueueRepository::TABLE_NAME);
         $queryBuilder->getRestrictions()->removeAll();
 
-        $queryBuilder->delete(InheritanceQueueRepository::TABLE_NAME)
-            ->execute();
+        $queryBuilder->delete(InheritanceQueueRepository::TABLE_NAME)->executeStatement();
     }
 
     /**
@@ -260,18 +252,16 @@ class UpdateInheritanceCommand extends Command
      */
     protected function addProductToInheritanceQueue(int $product_uid): void
     {
-        /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable(InheritanceQueueRepository::TABLE_NAME);
         $queryBuilder->getRestrictions()->removeAll();
 
-        $queryBuilder->insert(InheritanceQueueRepository::TABLE_NAME)
-            ->values([
-                'product_uid' => $product_uid,
-                'indexed' => 0,
-                'errors' => '',
-            ])
-            ->execute();
+        $queryBuilder->insert(InheritanceQueueRepository::TABLE_NAME)->values([
+            'product_uid' => $product_uid,
+            'indexed' => 0,
+            'errors' => '',
+        ])->executeStatement();
     }
 
     /**
@@ -282,18 +272,14 @@ class UpdateInheritanceCommand extends Command
      */
     protected function removeProductFromInheritanceQueue(int $product_uid): void
     {
-        /** @var \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder */
+        /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable(InheritanceQueueRepository::TABLE_NAME);
         $queryBuilder->getRestrictions()->removeAll();
 
-        $queryBuilder->delete(InheritanceQueueRepository::TABLE_NAME)
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'product_uid',
-                    $queryBuilder->createNamedParameter($product_uid, \PDO::PARAM_INT)
-                ),
-            )
-            ->execute();
+        $queryBuilder->delete(InheritanceQueueRepository::TABLE_NAME)->where($queryBuilder->expr()->eq(
+            'product_uid',
+            $queryBuilder->createNamedParameter($product_uid, PDO::PARAM_INT)
+        ))->executeStatement();
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
 use Pixelant\PxaProductManager\Domain\Repository\FilterRepository;
@@ -59,7 +60,7 @@ class ProductDisplayController extends AbstractController
      *
      * @return void
      */
-    public function listAction(): void
+    public function listAction(): ResponseInterface
     {
         // die($this->settings);
         // Selected filters
@@ -72,6 +73,7 @@ class ProductDisplayController extends AbstractController
 
         $this->view->assign('filters', $filters);
         $this->view->assign('settingsJson', json_encode($this->lazyListSettings($categories)));
+        return $this->htmlResponse();
     }
 
     /**

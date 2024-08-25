@@ -1,70 +1,88 @@
 <?php
 
-defined('TYPO3_MODE') || die;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
+use Pixelant\PxaProductManager\Controller\Api\LazyLoadingController;
+use Pixelant\PxaProductManager\Controller\Api\LazyAvailableFiltersController;
+use Pixelant\PxaProductManager\Controller\ProductShowController;
+use Pixelant\PxaProductManager\Controller\LazyProductController;
+use Pixelant\PxaProductManager\Controller\ProductRenderController;
+use Pixelant\PxaProductManager\Controller\CustomProductController;
+use Pixelant\PxaProductManager\Backend\FormEngine\FieldControl\AttributeIdentifierControl;
+use Pixelant\PxaProductManager\Backend\FormEngine\FieldWizard\ParentValueFieldWizard;
+use Pixelant\PxaProductManager\Backend\FormEngine\FieldWizard\HiddenAttributeTypeValueFieldWizard;
+use Pixelant\PxaProductManager\Backend\FormEngine\FieldInformation\InheritedProductFieldInformation;
+use Pixelant\PxaProductManager\Backend\FormDataProvider\ProductFormDataProvider;
+use TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew;
+use TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems;
+use Pixelant\PxaProductManager\Backend\FormDataProvider\AttributeValueFormDataProvider;
+use Pixelant\PxaProductManager\Backend\FormDataProvider\NewAttributeRelationRecordsDataProvider;
+use TYPO3\CMS\Backend\Form\FormDataProvider\EvaluateDisplayConditions;
+use Pixelant\PxaProductManager\Configuration\Flexform\Registry;
+use Pixelant\PxaProductManager\Hook\PageLayoutView;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use Pixelant\PxaProductManager\LinkHandler\LinkHandling;
+use Pixelant\PxaProductManager\LinkHandler\LinkHandlingFormData;
+use Pixelant\PxaProductManager\Service\LinkBuilders\TypolinkBuilderService;
+use Pixelant\PxaProductManager\Hook\PageHookRelatedCategories;
+
+use TYPO3\CMS\Core\Cache\Frontend\VariableFrontend;
+use Pixelant\PxaProductManager\Domain\Repository\PageRepository;
+defined('TYPO3') || die;
 
 (function () {
-    // Extbase
-
-    $extbaseContainer = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Extbase\Object\Container\Container::class
-    );
-    $extbaseContainer->registerImplementation(
-        \Pixelant\PxaProductManager\Attributes\ValueUpdater\UpdaterInterface::class,
-        \Pixelant\PxaProductManager\Attributes\ValueUpdater\ValueUpdaterService::class
-    );
-
     // Configure plugins
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Pixelant.pxa_product_manager',
+    ExtensionUtility::configurePlugin(
+        'PxaProductManager',
         'LazyLoading',
         [
-            \Pixelant\PxaProductManager\Controller\Api\LazyLoadingController::class => 'list',
+            LazyLoadingController::class => 'list',
         ],
         [
-            \Pixelant\PxaProductManager\Controller\Api\LazyLoadingController::class => 'list',
+            LazyLoadingController::class => 'list',
         ]
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Pixelant.pxa_product_manager',
+    ExtensionUtility::configurePlugin(
+        'PxaProductManager',
         'LazyAvailableFilters',
         [
-            \Pixelant\PxaProductManager\Controller\Api\LazyAvailableFiltersController::class => 'list',
+            LazyAvailableFiltersController::class => 'list',
         ],
         [
-            \Pixelant\PxaProductManager\Controller\Api\LazyAvailableFiltersController::class => 'list',
+            LazyAvailableFiltersController::class => 'list',
         ]
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Pixelant.pxa_product_manager',
+    ExtensionUtility::configurePlugin(
+        'PxaProductManager',
         'ProductShow',
         [
-            \Pixelant\PxaProductManager\Controller\ProductShowController::class => 'show'
+            ProductShowController::class => 'show'
         ]
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Pixelant.pxa_product_manager',
+    ExtensionUtility::configurePlugin(
+        'PxaProductManager',
         'ProductList',
         [
-            \Pixelant\PxaProductManager\Controller\LazyProductController::class => 'list'
+            LazyProductController::class => 'list'
         ]
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Pixelant.pxa_product_manager',
+    ExtensionUtility::configurePlugin(
+        'PxaProductManager',
         'ProductRender',
         [
-            \Pixelant\PxaProductManager\Controller\ProductRenderController::class => 'init'
+            ProductRenderController::class => 'init'
         ]
     );
 
-    \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
-        'Pixelant.pxa_product_manager',
+    ExtensionUtility::configurePlugin(
+        'PxaProductManager',
         'CustomProductList',
         [
-            \Pixelant\PxaProductManager\Controller\CustomProductController::class => 'list'
+            CustomProductController::class => 'list'
         ]
     );
 
@@ -72,61 +90,61 @@ defined('TYPO3_MODE') || die;
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1534315213786] = [
         'nodeName' => 'attributeIdentifierControl',
         'priority' => 30,
-        'class' => \Pixelant\PxaProductManager\Backend\FormEngine\FieldControl\AttributeIdentifierControl::class
+        'class' => AttributeIdentifierControl::class
     ];
 
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1608645557] = [
         'nodeName' => 'productParentValue',
         'priority' => '30',
-        'class' => \Pixelant\PxaProductManager\Backend\FormEngine\FieldWizard\ParentValueFieldWizard::class,
+        'class' => ParentValueFieldWizard::class,
     ];
 
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1611778775] = [
         'nodeName' => 'hiddenAttributeType',
         'priority' => '30',
-        'class' => \Pixelant\PxaProductManager\Backend\FormEngine\FieldWizard\HiddenAttributeTypeValueFieldWizard::class,
+        'class' => HiddenAttributeTypeValueFieldWizard::class,
     ];
 
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['nodeRegistry'][1609921375] = [
         'nodeName' => 'inheritedProductField',
         'priority' => '30',
-        'class' => \Pixelant\PxaProductManager\Backend\FormEngine\FieldInformation\InheritedProductFieldInformation::class,
+        'class' => InheritedProductFieldInformation::class,
     ];
 
     // Add attributes fields to Product edit form
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][\Pixelant\PxaProductManager\Backend\FormDataProvider\ProductFormDataProvider::class] = [
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][ProductFormDataProvider::class] = [
         'depends' => [
-            \TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew::class,
-            \TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems::class
+            DatabaseRowInitializeNew::class,
+            TcaSelectItems::class
         ]
     ];
 
     // Add attributes fields to Product edit form
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][\Pixelant\PxaProductManager\Backend\FormDataProvider\AttributeValueFormDataProvider::class] = [
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][AttributeValueFormDataProvider::class] = [
         'depends' => [
-            \TYPO3\CMS\Backend\Form\FormDataProvider\DatabaseRowInitializeNew::class,
-            \TYPO3\CMS\Backend\Form\FormDataProvider\TcaSelectItems::class
+            DatabaseRowInitializeNew::class,
+            TcaSelectItems::class
         ]
     ];
 
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][\Pixelant\PxaProductManager\Backend\FormDataProvider\NewAttributeRelationRecordsDataProvider::class] = [
+    $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['formDataGroup']['tcaDatabaseRecord'][NewAttributeRelationRecordsDataProvider::class] = [
         'depends' => [
-            \TYPO3\CMS\Backend\Form\FormDataProvider\EvaluateDisplayConditions::class
+            EvaluateDisplayConditions::class
         ]
     ];
 
     // Modify data structure of flexform. Hook will dynamically load flexform parts for selected action
     // Register default plugin actions with flexform settings
-    \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \Pixelant\PxaProductManager\Configuration\Flexform\Registry::class
+    GeneralUtility::makeInstance(
+        Registry::class
     )->registerDefaultActions();
 
     // Register hook to show plugin flexform settings preview
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['list_type_Info']['pxaproductmanager_pi1']['pxa_product_manager'] =
-        \Pixelant\PxaProductManager\Hook\PageLayoutView::class . '->getExtensionSummary';
+        PageLayoutView::class . '->getExtensionSummary';
 
     // Include page TS
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig(
+    ExtensionManagementUtility::addPageTSConfig(
         '<INCLUDE_TYPOSCRIPT: source="DIR:EXT:pxa_product_manager/Configuration/TypoScript/PageTS/" extensions="ts">'
     );
 
@@ -139,28 +157,25 @@ defined('TYPO3_MODE') || die;
     $GLOBALS['TYPO3_CONF_VARS']['SYS']['formEngine']['linkHandler'][$linkType]
         = \Pixelant\PxaProductManager\LinkHandler\LinkHandlingFormData::class;
     $GLOBALS['TYPO3_CONF_VARS']['FE']['typolinkBuilder'][$linkType]
-        = \Pixelant\PxaProductManager\Service\TypolinkBuilderService::class;
+        = TypolinkBuilderService::class;
 
     // Draw header hook
     $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/db_layout.php']['drawHeaderHook']['pxa_product_manager']
         = \Pixelant\PxaProductManager\Hook\PageHookRelatedCategories::class . '->render';
 
-    // Register icons
-    $icons = [
-        'ext-pxa-product-manager-wizard-icon' => 'package.svg',
-        'apps-pagetree-productdisplay-default' => 'T3Icons/apps/apps-pagetree-productdisplay-default.svg',
-        'apps-pagetree-productdisplay-hideinmenu' => 'T3Icons/apps/apps-pagetree-productdisplay-hideinmenu.svg',
-    ];
-    $iconRegistry = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-        \TYPO3\CMS\Core\Imaging\IconRegistry::class
+    // Register TCA post-processing
+    $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['GLOBAL']['extTablesInclusion-PostProcessing']['pxa_product_manager'] =
+        \Pixelant\PxaProductManager\TCA\AttributeValueTcaProvider::class . '->getAttributeValueTypes';
+
+    // Allow backend users to drag and drop the new page type:
+    $pdDokType = PageRepository::DOKTYPE_PRODUCT_DISPLAY;
+    ExtensionManagementUtility::addUserTSConfig(
+        'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . $pdDokType . ')'
     );
 
-    foreach ($icons as $identifier => $path) {
-        $iconRegistry->registerIcon(
-            $identifier,
-            \TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider::class,
-            ['source' => 'EXT:pxa_product_manager/Resources/Public/Icons/Svg/' . $path]
-        );
+    // Add doktype to yoast_seo:s allowedDoktypes.
+    if (ExtensionManagementUtility::isLoaded('yoast_seo')) {
+        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['yoast_seo']['allowedDoktypes']['product_display'] = $pdDokType;
     }
 
     // Cache framework
@@ -182,16 +197,5 @@ defined('TYPO3_MODE') || die;
     if (! isset($GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheIdentifier]['groups'])) {
         $GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations'][$cacheIdentifier]['groups']
             = ['pages', 'system'];
-    }
-
-    // Allow backend users to drag and drop the new page type:
-    $pdDokType = \Pixelant\PxaProductManager\Domain\Repository\PageRepository::DOKTYPE_PRODUCT_DISPLAY;
-    \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addUserTSConfig(
-        'options.pageTree.doktypesToShowInNewPageDragArea := addToList(' . $pdDokType . ')'
-    );
-
-    // Add doktype to yoast_seo:s allowedDoktypes.
-    if (\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::isLoaded('yoast_seo')) {
-        $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['yoast_seo']['allowedDoktypes']['product_display'] = $pdDokType;
     }
 })();

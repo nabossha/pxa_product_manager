@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Hook;
 
+use PDO;
 use Pixelant\PxaProductManager\Configuration\Flexform\Registry;
 use Pixelant\PxaProductManager\Configuration\Flexform\StructureLoader;
 use Psr\Http\Message\ServerRequestInterface;
@@ -140,9 +141,7 @@ class FlexFormDataStructureHook implements SingletonInterface
             $uid = (int)$this->request->getQueryParams()['uid'];
             $row = $queryBuilder
                 ->select('pi_flexform')
-                ->from('tt_content')
-                ->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, \PDO::PARAM_INT)))
-                ->execute()
+                ->from('tt_content')->where($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($uid, PDO::PARAM_INT)))->executeQuery()
                 ->fetch();
 
             $this->setLastActionFromSettings($row);

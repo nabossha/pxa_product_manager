@@ -2,6 +2,7 @@
 
 namespace Pixelant\PxaProductManager\Domain\Model;
 
+use TYPO3\CMS\Extbase\Annotation\ORM\Lazy;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
@@ -54,13 +55,13 @@ class AttributeSet extends AbstractEntity
     protected string $layout = '';
 
     /**
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Attribute>
+     * @var ObjectStorage<Attribute>
      */
     protected ObjectStorage $attributes;
 
     /**
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\Pixelant\PxaProductManager\Domain\Model\Category>
+     * @Lazy
+     * @var ObjectStorage<Category>
      */
     protected ObjectStorage $categories;
 

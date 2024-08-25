@@ -4,11 +4,8 @@
 			<ROOT>
 				<el>
 					<settings.pids.singleViewPid>
-						<TCEforms>
-							<label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.pids.single_view_pid</label>
-							<config>
+						<label>LLL:EXT:pxa_product_manager/Resources/Private/Language/locallang_be.xlf:flexform.pids.single_view_pid</label><config>
 								<type>group</type>
-								<internal_type>db</internal_type>
 								<allowed>pages</allowed>
 								<size>1</size>
 								<maxitems>1</maxitems>
@@ -20,7 +17,6 @@
 									</suggest>
 								</wizards>
 							</config>
-						</TCEforms>
 					</settings.pids.singleViewPid>
 				</el>
 			</ROOT>

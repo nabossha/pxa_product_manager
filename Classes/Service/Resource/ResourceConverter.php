@@ -6,21 +6,15 @@ namespace Pixelant\PxaProductManager\Service\Resource;
 
 use Pixelant\PxaProductManager\Domain\Resource\ResourceInterface;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
+use Psr\Container\ContainerInterface;
 
 class ResourceConverter
 {
-    /**
-     * @var ObjectManager
-     */
-    protected ObjectManager $objectManager;
+    private ContainerInterface $container;
 
-    /**
-     * @param ObjectManager $objectManager
-     */
-    public function injectObjectManager(ObjectManager $objectManager): void
+    public function __construct(ContainerInterface $container)
     {
-        $this->objectManager = $objectManager;
+        $this->container = $container;
     }
 
     /**
@@ -34,7 +28,8 @@ class ResourceConverter
     {
         $resource ??= $this->translateEntityNameToResourceName($entity);
         /** @var ResourceInterface $resourceInstance */
-        $resourceInstance = $this->objectManager->get($resource, $entity);
+        $resourceInstance = $this->container->get($resource);
+        $resourceInstance->setEntity($entity);
 
         return $resourceInstance->toArray();
     }
@@ -46,7 +41,7 @@ class ResourceConverter
      * @param string $resource
      * @return array
      */
-    public function covertMany(array $entities, string $resource = null)
+    public function convertMany(array $entities, string $resource = null): array
     {
         return array_map(fn (AbstractEntity $entity) => $this->convert($entity, $resource), $entities);
     }

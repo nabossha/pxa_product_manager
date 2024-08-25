@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Controller;
 
+use Psr\Http\Message\ResponseInterface;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Pixelant\PxaProductManager\Domain\Model\Product;
 use Pixelant\PxaProductManager\Domain\Repository\CategoryRepository;
@@ -43,8 +44,9 @@ class ProductShowController extends AbstractController
      * @param Product $product
      * @param Category|null $category
      */
-    public function showAction(Product $product, Category $category = null): void
+    public function showAction(Product $product, Category $category = null): ResponseInterface
     {
         $this->view->assignMultiple(compact('product', 'category'));
+        return $this->htmlResponse();
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Utility;
 
+use PDO;
 use Pixelant\PxaProductManager\Domain\Repository\AttributeValueRepository;
 use Pixelant\PxaProductManager\Domain\Repository\ProductRepository;
 use Pixelant\PxaProductManager\Domain\Repository\RelationInheritanceIndexRepository;
@@ -80,32 +81,25 @@ class RelationInheritanceIndexUtility
                     'child_product.uid',
                     $queryBuilder->quoteIdentifier('tprii.child_parent_id')
                 )
+            )->where($queryBuilder->expr()->eq(
+            'tprii.tablename',
+            $queryBuilder->createNamedParameter(
+                'tx_pxaproductmanager_domain_model_attributevalue',
+                PDO::PARAM_STR
             )
-            ->where(
-                $queryBuilder->expr()->eq(
-                    'tprii.tablename',
-                    $queryBuilder->createNamedParameter(
-                        'tx_pxaproductmanager_domain_model_attributevalue',
-                        \PDO::PARAM_STR
-                    )
-                ),
-                $queryBuilder->expr()->eq(
-                    'tprii.child_parent_tablename',
-                    $queryBuilder->createNamedParameter(
-                        'tx_pxaproductmanager_domain_model_product',
-                        \PDO::PARAM_STR
-                    )
-                ),
-                $queryBuilder->expr()->eq(
-                    'tprii.child_parent_id',
-                    $queryBuilder->createNamedParameter($childParentId, \PDO::PARAM_INT)
-                ),
-                $queryBuilder->expr()->neq(
-                    'child_product.parent',
-                    'attrval_parent.product'
-                ),
+        ), $queryBuilder->expr()->eq(
+            'tprii.child_parent_tablename',
+            $queryBuilder->createNamedParameter(
+                'tx_pxaproductmanager_domain_model_product',
+                PDO::PARAM_STR
             )
-            ->execute()
+        ), $queryBuilder->expr()->eq(
+            'tprii.child_parent_id',
+            $queryBuilder->createNamedParameter($childParentId, PDO::PARAM_INT)
+        ), $queryBuilder->expr()->neq(
+            'child_product.parent',
+            'attrval_parent.product'
+        ))->executeQuery()
             ->fetchAllAssociative();
 
         if (is_array($result)) {
@@ -132,21 +126,13 @@ class RelationInheritanceIndexUtility
         $queryBuilder = self::getQueryBuilderForTable(RelationInheritanceIndexRepository::TABLE_NAME);
 
         $queryBuilder
-            ->delete(RelationInheritanceIndexRepository::TABLE_NAME)
-            ->where(
-                $queryBuilder->expr()->eq('uid_parent', $queryBuilder->createNamedParameter($uidParent)),
-                $queryBuilder->expr()->eq('uid_child', $queryBuilder->createNamedParameter($uidChild)),
-                $queryBuilder->expr()->eq(
-                    'tablename',
-                    $queryBuilder->createNamedParameter(AttributeValueRepository::TABLE_NAME)
-                ),
-                $queryBuilder->expr()->eq('child_parent_id', $queryBuilder->createNamedParameter($childParentId)),
-                $queryBuilder->expr()->eq(
-                    'child_parent_tablename',
-                    $queryBuilder->createNamedParameter(ProductRepository::TABLE_NAME)
-                )
-            )
-            ->execute();
+            ->delete(RelationInheritanceIndexRepository::TABLE_NAME)->where($queryBuilder->expr()->eq('uid_parent', $queryBuilder->createNamedParameter($uidParent)), $queryBuilder->expr()->eq('uid_child', $queryBuilder->createNamedParameter($uidChild)), $queryBuilder->expr()->eq(
+            'tablename',
+            $queryBuilder->createNamedParameter(AttributeValueRepository::TABLE_NAME)
+        ), $queryBuilder->expr()->eq('child_parent_id', $queryBuilder->createNamedParameter($childParentId)), $queryBuilder->expr()->eq(
+            'child_parent_tablename',
+            $queryBuilder->createNamedParameter(ProductRepository::TABLE_NAME)
+        ))->executeStatement();
     }
 
     /**

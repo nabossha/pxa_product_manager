@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pixelant\PxaProductManager\Service\Category;
 
+use InvalidArgumentException;
 use Pixelant\PxaProductManager\Domain\Collection\CanCreateCollection;
 use Pixelant\PxaProductManager\Domain\Model\Category;
 use Traversable;
@@ -99,12 +100,12 @@ class TreeService
      * Validate incoming type of categories.
      *
      * @param $categories
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function validateType($categories): void
     {
         if (!is_array($categories) && !$categories instanceof Traversable) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf('Expect categories to be array or Traversable, but got "%s"', gettype($categories)),
                 1585128511867
             );
